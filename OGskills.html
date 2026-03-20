@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OGskills — Discover Your Tech Journey</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Righteous&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:#f7f5f0; --surface:#fff; --surface2:#f0ede6;
+      --ink:#1a1a18; --ink-muted:#6b6b63;
+      --accent:#2d6a4f; --accent-light:#d8f3dc; --accent-mid:#74c69d;
+      --gold:#e9c46a; --border:#e0ddd6; --radius:16px;
+      --shadow:0 4px 28px rgba(0,0,0,0.08);
+      --nav-bg:rgba(247,245,240,0.97);
+      --card-hover:0 16px 48px rgba(0,0,0,0.1);
+      --t:background 0.4s,color 0.4s,border-color 0.4s,box-shadow 0.4s;
+    }
+    [data-theme="dark"] {
+      --bg:#0f0f0e; --surface:#1a1a18; --surface2:#242422;
+      --ink:#f0ede6; --ink-muted:#9a9a90;
+      --accent:#52b788; --accent-light:#1a3a2a; --accent-mid:#95d5b2;
+      --gold:#f4c842; --border:#2e2e2c;
+      --shadow:0 4px 28px rgba(0,0,0,0.4);
+      --nav-bg:rgba(15,15,14,0.97);
+      --card-hover:0 16px 48px rgba(0,0,0,0.5);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); overflow-x:hidden; transition:var(--t); }
+
+    /* ── PAGE VIEWS ── */
+    .page { display:none; }
+    .page.active { display:block; }
+
+    /* ═══════════════════════════════════════
+       LOGIN PAGE
+    ═══════════════════════════════════════ */
+    .login-page {
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      background:var(--bg); padding:24px; position:relative; overflow:hidden;
+    }
+    .login-page::before {
+      content:''; position:absolute; top:-200px; right:-200px;
+      width:600px; height:600px;
+      background:radial-gradient(circle, var(--accent-light) 0%, transparent 65%);
+      pointer-events:none; transition:var(--t);
+    }
+    .login-page::after {
+      content:''; position:absolute; bottom:-150px; left:-150px;
+      width:500px; height:500px;
+      background:radial-gradient(circle, var(--accent-light) 0%, transparent 65%);
+      pointer-events:none; transition:var(--t);
+    }
+    .login-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:24px; padding:52px 48px; width:100%; max-width:460px;
+      box-shadow:0 24px 64px rgba(0,0,0,0.1); position:relative; z-index:1;
+      animation:fadeUp 0.6s ease both;
+      transition:background 0.4s, border-color 0.4s;
+    }
+    .login-logo { font-family:'Righteous',cursive; font-size:1.8rem; color:var(--ink); margin-bottom:8px; text-align:center; }
+    .login-logo span { color:var(--accent); }
+    .login-tagline { font-size:0.9rem; color:var(--ink-muted); text-align:center; margin-bottom:36px; }
+    .login-divider { display:flex; align-items:center; gap:12px; margin:24px 0; }
+    .login-divider::before, .login-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+    .login-divider span { font-size:0.78rem; color:var(--ink-muted); font-weight:500; }
+
+    .google-btn {
+      width:100%; display:flex; align-items:center; justify-content:center; gap:12px;
+      background:var(--surface); border:1.5px solid var(--border);
+      border-radius:12px; padding:14px 20px; cursor:pointer;
+      font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:600; color:var(--ink);
+      transition:all 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.06);
+    }
+    .google-btn:hover { border-color:var(--accent); box-shadow:0 4px 16px rgba(45,106,79,0.15); transform:translateY(-1px); }
+    .google-btn img { width:20px; height:20px; }
+
+    .login-sep { display:flex; align-items:center; gap:12px; margin:20px 0; }
+    .login-sep::before, .login-sep::after { content:''; flex:1; height:1px; background:var(--border); }
+    .login-sep span { font-size:0.75rem; color:var(--ink-muted); }
+
+    .input-group { margin-bottom:16px; }
+    .input-group label { display:block; font-size:0.82rem; font-weight:600; color:var(--ink); margin-bottom:6px; }
+    .input-group input {
+      width:100%; background:var(--surface2); border:1.5px solid var(--border);
+      border-radius:10px; padding:13px 16px; font-family:'DM Sans',sans-serif;
+      font-size:0.92rem; color:var(--ink); outline:none; transition:all 0.2s;
+    }
+    .input-group input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-light); background:var(--surface); }
+    .input-group input::placeholder { color:var(--ink-muted); }
+
+    .auth-btn {
+      width:100%; background:var(--accent); color:#fff; border:none;
+      border-radius:12px; padding:14px; font-family:'DM Sans',sans-serif;
+      font-size:0.95rem; font-weight:700; cursor:pointer; transition:all 0.2s;
+      box-shadow:0 4px 14px rgba(45,106,79,0.3); margin-top:4px;
+    }
+    .auth-btn:hover { filter:brightness(0.9); transform:translateY(-1px); box-shadow:0 6px 20px rgba(45,106,79,0.4); }
+
+    .auth-switch { text-align:center; margin-top:20px; font-size:0.85rem; color:var(--ink-muted); }
+    .auth-switch a { color:var(--accent); font-weight:600; cursor:pointer; text-decoration:none; }
+    .auth-switch a:hover { text-decoration:underline; }
+
+    .login-features { margin-top:32px; padding-top:28px; border-top:1px solid var(--border); display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+    .login-feat { text-align:center; }
+    .login-feat-icon { font-size:1.4rem; margin-bottom:6px; }
+    .login-feat p { font-size:0.75rem; color:var(--ink-muted); font-weight:500; line-height:1.4; }
+
+    .login-theme-btn {
+      position:absolute; top:20px; right:20px; z-index:10;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:100px; padding:8px 14px; cursor:pointer;
+      font-size:0.82rem; font-weight:600; color:var(--ink);
+      display:flex; align-items:center; gap:6px;
+      transition:all 0.2s;
+    }
+    .login-theme-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+    .toast {
+      position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(80px);
+      background:var(--ink); color:var(--bg); padding:12px 24px;
+      border-radius:100px; font-size:0.88rem; font-weight:600;
+      z-index:999; transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      white-space:nowrap; box-shadow:0 8px 24px rgba(0,0,0,0.2);
+    }
+    .toast.show { transform:translateX(-50%) translateY(0); }
+
+    .error-msg { background:#fee2e2; color:#b91c1c; border-radius:10px; padding:10px 14px; font-size:0.84rem; margin-bottom:14px; display:none; }
+    [data-theme="dark"] .error-msg { background:#2a0a0a; color:#f87171; }
+
+    /* ═══════════════════════════════════════
+       MAIN APP
+    ═══════════════════════════════════════ */
+
+    /* Theme toggle */
+    .theme-toggle { position:relative; width:54px; height:28px; cursor:pointer; flex-shrink:0; }
+    .theme-toggle input { opacity:0; width:0; height:0; position:absolute; }
+    .toggle-track { position:absolute; inset:0; background:var(--border); border-radius:100px; transition:background 0.35s; border:1.5px solid var(--border); }
+    .theme-toggle input:checked + .toggle-track { background:#1a1a18; border-color:#444; }
+    .toggle-thumb { position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,0.2); transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),background 0.35s; display:flex; align-items:center; justify-content:center; font-size:11px; z-index:1; }
+    .theme-toggle input:checked ~ .toggle-thumb { transform:translateX(26px); background:#ffd60a; }
+    .toggle-icons { position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between; padding:0 6px; pointer-events:none; font-size:10px; }
+
+    /* Announce */
+    .announce-bar { background:var(--ink); color:var(--bg); display:flex; align-items:center; justify-content:center; gap:10px; padding:9px 48px 9px 20px; font-size:0.82rem; font-weight:500; position:relative; z-index:102; transition:var(--t); }
+    .announce-bar a { color:var(--accent-mid); text-decoration:none; font-weight:700; }
+    .announce-close { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; color:#888; font-size:1rem; cursor:pointer; }
+
+    /* Nav */
+    nav { position:sticky; top:0; z-index:100; background:var(--nav-bg); backdrop-filter:blur(18px); border-bottom:1px solid var(--border); padding:0 48px; height:68px; display:flex; align-items:center; justify-content:space-between; transition:var(--t); }
+    .nav-logo { font-family:'Righteous',cursive; font-size:1.5rem; color:var(--ink); text-decoration:none; letter-spacing:0.02em; cursor:pointer; }
+    .nav-logo span { color:var(--accent); }
+    .nav-center { display:flex; gap:28px; list-style:none; align-items:center; }
+    .nav-center a { text-decoration:none; font-size:0.88rem; font-weight:500; color:var(--ink-muted); transition:color 0.2s; position:relative; padding-bottom:2px; cursor:pointer; }
+    .nav-center a::after { content:''; position:absolute; bottom:-2px; left:0; width:0; height:2px; background:var(--accent); transition:width 0.25s; border-radius:2px; }
+    .nav-center a:hover { color:var(--accent); }
+    .nav-center a:hover::after { width:100%; }
+    .nav-right { display:flex; align-items:center; gap:14px; }
+    .nav-cta { background:var(--accent); color:#fff; border:none; padding:11px 24px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:600; cursor:pointer; transition:all 0.2s; box-shadow:0 3px 12px rgba(45,106,79,0.3); }
+    .nav-cta:hover { filter:brightness(0.88); transform:translateY(-1px); }
+
+    /* User avatar in nav */
+    .nav-user { display:flex; align-items:center; gap:10px; cursor:pointer; }
+    .nav-avatar { width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid var(--accent); }
+    .nav-avatar-placeholder { width:36px; height:36px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-family:'Righteous',cursive; font-size:0.9rem; color:#fff; border:2px solid var(--accent-mid); }
+    .nav-username { font-size:0.85rem; font-weight:600; color:var(--ink); max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .nav-logout { background:none; border:1px solid var(--border); color:var(--ink-muted); border-radius:100px; padding:7px 14px; font-size:0.78rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s; }
+    .nav-logout:hover { border-color:#e74c3c; color:#e74c3c; }
+
+    /* Hamburger */
+    .hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:8px; }
+    .hamburger span { display:block; width:24px; height:2px; background:var(--ink); border-radius:2px; transition:all 0.3s; }
+    .hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity:0; }
+    .hamburger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg); }
+    .mobile-menu { display:none; position:fixed; top:68px; left:0; right:0; background:var(--surface); border-bottom:1px solid var(--border); padding:16px 24px 28px; z-index:99; box-shadow:0 12px 32px rgba(0,0,0,0.15); flex-direction:column; gap:2px; transition:var(--t); }
+    .mobile-menu.open { display:flex; }
+    .mobile-menu a { text-decoration:none; color:var(--ink); font-size:1rem; font-weight:500; padding:13px 8px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; transition:color 0.2s; cursor:pointer; }
+    .mobile-menu a:hover { color:var(--accent); }
+    .mobile-menu-cta { margin-top:14px; background:var(--accent); color:#fff; border:none; border-radius:100px; padding:15px; font-size:1rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; width:100%; }
+    .mobile-theme-row { display:flex; align-items:center; justify-content:space-between; padding:14px 8px; border-bottom:1px solid var(--border); }
+    .mobile-theme-row span { font-size:0.9rem; font-weight:500; color:var(--ink); }
+
+    /* Marquee */
+    .marquee-wrap { background:var(--accent); overflow:hidden; padding:11px 0; border-top:2px solid rgba(0,0,0,0.15); border-bottom:2px solid rgba(0,0,0,0.15); transition:background 0.4s; }
+    .marquee-inner { display:flex; animation:marqueeScroll 32s linear infinite; white-space:nowrap; width:max-content; }
+    .marquee-wrap:hover .marquee-inner { animation-play-state:paused; }
+    .marquee-item { display:inline-flex; align-items:center; gap:10px; color:#fff; font-family:'Righteous',cursive; font-size:0.88rem; letter-spacing:0.04em; padding:0 32px; }
+    .marquee-item .dot { color:rgba(255,255,255,0.4); font-size:0.5rem; }
+    @keyframes marqueeScroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .marquee-wrap.dark { background:var(--surface2); border-color:var(--border); }
+    .marquee-wrap.dark .marquee-inner { animation-duration:22s; animation-direction:reverse; }
+    .marquee-wrap.dark .marquee-item { color:var(--ink-muted); }
+    .marquee-wrap.dark .marquee-item .dot { color:var(--accent); font-size:0.7rem; }
+
+    /* Hero */
+    .hero { padding:72px 48px 80px; max-width:1140px; margin:0 auto; display:grid; grid-template-columns:1.1fr 0.9fr; gap:64px; align-items:center; }
+    .hero-eyebrow { display:inline-flex; align-items:center; gap:8px; background:var(--accent-light); color:var(--accent); font-size:0.78rem; font-weight:700; padding:6px 16px; border-radius:100px; margin-bottom:22px; letter-spacing:0.06em; text-transform:uppercase; animation:fadeUp 0.6s ease both; transition:var(--t); }
+    .hero-eyebrow::before { content:'●'; font-size:0.45rem; }
+    h1 { font-family:'Syne',sans-serif; font-size:clamp(2.4rem,4.5vw,3.8rem); line-height:1.08; letter-spacing:-0.03em; font-weight:800; animation:fadeUp 0.6s 0.1s ease both; }
+    h1 em { font-style:italic; color:var(--accent); transition:color 0.4s; }
+    .hero-sub { margin-top:18px; font-size:1.05rem; color:var(--ink-muted); line-height:1.8; animation:fadeUp 0.6s 0.2s ease both; }
+    .beginner-tip { margin-top:22px; background:#fffbeb; border:1.5px solid #f6d860; border-radius:14px; padding:14px 18px; display:flex; gap:10px; animation:fadeUp 0.6s 0.25s ease both; }
+    [data-theme="dark"] .beginner-tip { background:#2a2200; border-color:#554400; }
+    .beginner-tip p { font-size:0.88rem; color:#7a5c00; line-height:1.6; }
+    [data-theme="dark"] .beginner-tip p { color:#d4a800; }
+    .hero-actions { margin-top:30px; display:flex; gap:14px; flex-wrap:wrap; animation:fadeUp 0.6s 0.3s ease both; }
+    .btn-primary { background:var(--accent); color:#fff; border:none; padding:15px 34px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:600; cursor:pointer; transition:all 0.2s; box-shadow:0 4px 18px rgba(45,106,79,0.32); }
+    .btn-primary:hover { filter:brightness(0.88); transform:translateY(-2px); }
+    .btn-ghost { background:transparent; color:var(--ink); border:1.5px solid var(--border); padding:14px 28px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:1rem; font-weight:500; cursor:pointer; transition:all 0.2s; }
+    .btn-ghost:hover { border-color:var(--accent); color:var(--accent); }
+    .hero-trust { margin-top:28px; display:flex; align-items:center; gap:12px; animation:fadeUp 0.6s 0.35s ease both; }
+    .trust-avatars { display:flex; }
+    .trust-avatars span { width:32px; height:32px; border-radius:50%; border:2px solid var(--surface); background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:700; color:#fff; margin-left:-8px; }
+    .trust-avatars span:first-child { margin-left:0; }
+    .trust-text { font-size:0.82rem; color:var(--ink-muted); line-height:1.4; }
+    .trust-text strong { color:var(--ink); }
+    .hero-visual { animation:fadeUp 0.7s 0.3s ease both; }
+    .hero-card { background:var(--surface); border-radius:20px; padding:28px; box-shadow:var(--shadow); border:1px solid var(--border); position:relative; overflow:hidden; transition:var(--t); }
+    .hero-card::before { content:''; position:absolute; top:-40px; right:-40px; width:140px; height:140px; background:radial-gradient(circle,var(--accent-light) 0%,transparent 70%); pointer-events:none; }
+    .hero-card-title { font-family:'Righteous',cursive; font-size:0.82rem; color:var(--ink-muted); margin-bottom:20px; text-transform:uppercase; letter-spacing:0.06em; }
+    .skill-row-hero { margin-bottom:14px; }
+    .skill-label { display:flex; justify-content:space-between; font-size:0.85rem; font-weight:500; margin-bottom:6px; }
+    .skill-label span:last-child { color:var(--accent); font-weight:700; }
+    .bar-track { height:7px; background:var(--accent-light); border-radius:100px; overflow:hidden; transition:var(--t); }
+    .bar-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-mid)); border-radius:100px; animation:barGrow 1.4s ease both; }
+    @keyframes barGrow { from{width:0!important} }
+    .hero-badges { display:flex; gap:8px; flex-wrap:wrap; margin-top:20px; }
+    .hbadge { background:var(--accent-light); color:var(--accent); font-size:0.75rem; font-weight:600; padding:5px 12px; border-radius:100px; transition:var(--t); }
+    .hbadge.gold { background:var(--surface2); color:var(--gold); }
+    .hbadge.blue { background:var(--surface2); color:#38bdf8; }
+
+    /* Stats */
+    .stats-strip { background:var(--ink); padding:40px 48px; display:flex; justify-content:center; gap:64px; flex-wrap:wrap; transition:var(--t); }
+    .stat { text-align:center; }
+    .stat-num { font-family:'Righteous',cursive; font-size:2.2rem; color:var(--bg); }
+    .stat-num span { color:var(--accent-mid); }
+    .stat-label { font-size:0.8rem; color:var(--ink-muted); margin-top:4px; }
+
+    /* Guide */
+    .guide-wrap { background:var(--surface); border-bottom:1px solid var(--border); padding:24px 48px; transition:var(--t); }
+    .guide-strip { background:var(--accent-light); border:1px solid var(--border); border-radius:var(--radius); padding:24px 30px; max-width:1140px; margin:0 auto; display:flex; gap:16px; align-items:flex-start; transition:var(--t); }
+    .guide-strip h3 { font-family:'Righteous',cursive; font-size:0.95rem; margin-bottom:6px; color:var(--accent); }
+    .guide-strip p { font-size:0.88rem; color:var(--ink); line-height:1.7; }
+
+    /* Section */
+    .section { max-width:1140px; margin:0 auto; padding:88px 48px; }
+    .section-label { font-family:'Righteous',cursive; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+    .section-title { font-family:'Righteous',cursive; font-size:clamp(1.9rem,3vw,2.6rem); line-height:1.18; margin-bottom:14px; color:var(--ink); transition:color 0.4s; }
+    .section-sub { color:var(--ink-muted); font-size:1rem; line-height:1.8; max-width:540px; margin-bottom:52px; transition:color 0.4s; }
+
+    /* Tags */
+    .tag { display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:600; padding:5px 13px; border-radius:100px; letter-spacing:0.03em; transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1); cursor:default; border:1px solid transparent; animation:tagPop 0.5s ease both; }
+    .tag:hover { transform:translateY(-3px) scale(1.06); box-shadow:0 6px 18px rgba(0,0,0,0.12); }
+    @keyframes tagPop { from{opacity:0;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
+    .tag-green { background:var(--accent-light); color:var(--accent); border-color:rgba(45,106,79,0.2); }
+    .tag-gold { background:#fef9e7; color:#b7791f; border-color:#f6d860; }
+    [data-theme="dark"] .tag-gold { background:#2a1f00; color:#f4c842; border-color:#554400; }
+    .tag-blue { background:#e0f2fe; color:#0369a1; border-color:#bae6fd; }
+    [data-theme="dark"] .tag-blue { background:#0c1a2e; color:#38bdf8; border-color:#1e3a5f; }
+    .tag-red { background:#fee2e2; color:#b91c1c; border-color:#fca5a5; }
+    [data-theme="dark"] .tag-red { background:#2a0a0a; color:#f87171; border-color:#7f1d1d; }
+    .tag-purple { background:#f3e8ff; color:#7c3aed; border-color:#ddd6fe; }
+    [data-theme="dark"] .tag-purple { background:#1a0a2e; color:#c084fc; border-color:#3b0764; }
+
+    /* Features */
+    .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+    .feature-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:32px 28px; transition:transform 0.25s,box-shadow 0.25s,background 0.4s,border-color 0.4s; position:relative; overflow:hidden; }
+    .feature-card::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-mid)); transform:scaleX(0); transition:transform 0.3s; transform-origin:left; }
+    .feature-card:hover { transform:translateY(-5px); box-shadow:var(--card-hover); }
+    .feature-card:hover::after { transform:scaleX(1); }
+    .feature-icon { width:52px; height:52px; background:var(--accent-light); border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:20px; transition:var(--t); }
+    .feature-card h3 { font-family:'Righteous',cursive; font-size:1.1rem; margin-bottom:10px; color:var(--ink); }
+    .feature-card p { font-size:0.9rem; color:var(--ink-muted); line-height:1.7; }
+
+    /* Tracker */
+    #tracker { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); transition:var(--t); }
+    .tracker-inner { max-width:1140px; margin:0 auto; padding:88px 48px; }
+    .tracker-grid { display:grid; grid-template-columns:1fr 1.4fr; gap:52px; align-items:start; }
+    .tracker-help { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:12px 16px; font-size:0.85rem; color:var(--ink-muted); margin-bottom:14px; display:flex; gap:8px; transition:var(--t); }
+    .domain-card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:var(--t); }
+    .domain-header { background:linear-gradient(135deg,var(--accent),#1d4d39); color:#fff; padding:20px 24px; display:flex; align-items:center; gap:12px; }
+    [data-theme="dark"] .domain-header { background:linear-gradient(135deg,#1a4a35,#0d2a1f); }
+    .domain-header h3 { font-family:'Righteous',cursive; font-size:1.1rem; }
+    .domain-body { padding:18px; }
+    .skill-item { display:flex; align-items:center; justify-content:space-between; padding:13px 16px; background:var(--surface); border-radius:10px; margin-bottom:9px; border:1.5px solid var(--border); cursor:pointer; transition:all 0.2s; user-select:none; min-height:54px; }
+    .skill-item:hover { border-color:var(--accent); transform:translateX(4px); box-shadow:0 2px 10px rgba(45,106,79,0.15); }
+    .skill-item.selected { border-color:var(--accent); background:var(--accent-light); }
+    .skill-item-left { display:flex; align-items:center; gap:12px; }
+    .skill-dot { width:12px; height:12px; border-radius:50%; background:var(--border); border:2px solid var(--border); transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); flex-shrink:0; }
+    .skill-item.selected .skill-dot { background:var(--accent); border-color:var(--accent); transform:scale(1.2); }
+    .skill-name { font-size:0.9rem; font-weight:600; color:var(--ink); }
+    .skill-sublabel { font-size:0.73rem; color:var(--ink-muted); margin-top:2px; }
+    .skill-level-badge { font-size:0.72rem; font-weight:700; padding:4px 11px; border-radius:100px; white-space:nowrap; transition:all 0.3s; }
+    .level-beginner { background:#fff3cd; color:#856404; }
+    [data-theme="dark"] .level-beginner { background:#2a1f00; color:#f4c842; }
+    .level-intermediate { background:#cff4fc; color:#055160; }
+    [data-theme="dark"] .level-intermediate { background:#0c1a2e; color:#38bdf8; }
+    .level-advanced { background:#d1e7dd; color:#0f5132; }
+    [data-theme="dark"] .level-advanced { background:var(--accent-light); color:var(--accent); }
+    .tracker-panel h2 { font-family:'Righteous',cursive; font-size:1.5rem; margin-bottom:8px; color:var(--ink); }
+    .tracker-panel>p { font-size:0.9rem; color:var(--ink-muted); margin-bottom:22px; }
+    .progress-overview { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:26px; margin-bottom:22px; transition:var(--t); }
+    .progress-overview h4 { font-family:'Righteous',cursive; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-muted); margin-bottom:18px; }
+    .prog-row { margin-bottom:14px; }
+    .prog-label { display:flex; justify-content:space-between; font-size:0.85rem; font-weight:500; margin-bottom:6px; color:var(--ink); }
+    .prog-label span:last-child { color:var(--ink-muted); font-size:0.8rem; }
+    .prog-bar { height:7px; background:var(--accent-light); border-radius:100px; overflow:hidden; transition:var(--t); }
+    .prog-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-mid)); border-radius:100px; transition:width 0.5s ease; }
+    .add-skill-form { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+    .add-skill-form input { flex:1; min-width:120px; background:var(--surface); border:1.5px solid var(--border); border-radius:10px; padding:12px 16px; font-family:'DM Sans',sans-serif; font-size:0.92rem; color:var(--ink); outline:none; transition:all 0.2s; }
+    .add-skill-form input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-light); }
+    .add-skill-form input::placeholder { color:var(--ink-muted); }
+    .add-skill-form select { background:var(--surface); border:1.5px solid var(--border); border-radius:10px; padding:12px; font-family:'DM Sans',sans-serif; font-size:0.88rem; color:var(--ink); outline:none; cursor:pointer; }
+    .add-skill-form button { background:var(--accent); color:#fff; border:none; padding:12px 22px; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:0.9rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+    .add-skill-form button:hover { filter:brightness(0.88); transform:translateY(-1px); }
+    .skills-log { margin-top:18px; max-height:230px; overflow-y:auto; }
+    .log-entry { display:flex; align-items:center; justify-content:space-between; padding:11px 14px; border-radius:10px; margin-bottom:8px; background:var(--surface); border:1px solid var(--border); animation:slideIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both; transition:var(--t); }
+    @keyframes slideIn { from{opacity:0;transform:translateX(-16px) scale(0.97)} to{opacity:1;transform:translateX(0) scale(1)} }
+    .log-entry-left { display:flex; align-items:center; gap:10px; }
+    .log-name { font-size:0.88rem; font-weight:600; color:var(--ink); }
+    .log-date { font-size:0.73rem; color:var(--ink-muted); }
+    .log-remove { background:none; border:none; cursor:pointer; color:var(--border); font-size:1rem; transition:color 0.2s; padding:4px 8px; }
+    .log-remove:hover { color:#e74c3c; }
+    .save-skills-btn { margin-top:14px; width:100%; background:var(--surface2); border:1.5px solid var(--border); color:var(--ink); border-radius:10px; padding:12px; font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:600; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .save-skills-btn:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
+    .save-skills-btn.saving { opacity:0.6; pointer-events:none; }
+
+    /* Journey */
+    .journey-steps { display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative; margin-top:52px; }
+    .journey-steps::before { content:''; position:absolute; top:28px; left:12.5%; right:12.5%; height:2px; background:linear-gradient(90deg,var(--accent-light),var(--accent-mid),var(--accent-light)); z-index:0; }
+    .step { display:flex; flex-direction:column; align-items:center; text-align:center; position:relative; z-index:1; padding:0 10px; }
+    .step-num { width:56px; height:56px; background:var(--surface); border:2px solid var(--accent-light); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Righteous',cursive; font-size:1.2rem; color:var(--accent); margin-bottom:18px; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); box-shadow:0 2px 12px rgba(45,106,79,0.1); }
+    .step:hover .step-num { background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 6px 24px rgba(45,106,79,0.35); transform:scale(1.1); }
+    .step h4 { font-family:'Righteous',cursive; font-size:0.95rem; margin-bottom:8px; color:var(--ink); }
+    .step p { font-size:0.84rem; color:var(--ink-muted); line-height:1.65; }
+
+    /* ── COURSES — thumbnail only ── */
+    #courses { background:var(--bg); transition:background 0.4s; }
+    .filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:38px; }
+    .filter-btn { background:var(--surface); border:1.5px solid var(--border); color:var(--ink-muted); padding:9px 20px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:500; cursor:pointer; transition:all 0.25s; white-space:nowrap; }
+    .filter-btn:hover { border-color:var(--accent); color:var(--accent); transform:translateY(-2px); }
+    .filter-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 3px 12px rgba(45,106,79,0.3); }
+    .courses-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+    .course-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; transition:transform 0.25s,box-shadow 0.25s,background 0.4s,border-color 0.4s; cursor:pointer; }
+    .course-card:hover { transform:translateY(-5px); box-shadow:var(--card-hover); }
+    .course-card.hidden { display:none; }
+    .course-thumb { position:relative; width:100%; padding-top:56.25%; background:#111; overflow:hidden; }
+    .course-thumb img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; transition:transform 0.35s; }
+    .course-card:hover .course-thumb img { transform:scale(1.07); }
+    .play-overlay { position:absolute; inset:0; background:rgba(0,0,0,0); display:flex; align-items:center; justify-content:center; transition:background 0.25s; }
+    .course-card:hover .play-overlay { background:rgba(0,0,0,0.3); }
+    .play-btn { width:48px; height:48px; background:rgba(255,0,0,0.9); border-radius:50%; display:flex; align-items:center; justify-content:center; transform:scale(0); transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1); pointer-events:none; box-shadow:0 4px 16px rgba(0,0,0,0.3); }
+    .play-btn svg { width:18px; height:18px; fill:#fff; margin-left:3px; }
+    .course-card:hover .play-btn { transform:scale(1); }
+    .course-duration { position:absolute; bottom:6px; right:6px; background:rgba(0,0,0,0.82); color:#fff; font-size:0.68rem; font-weight:700; padding:2px 7px; border-radius:4px; }
+    .course-category-tag { position:absolute; top:8px; left:8px; background:var(--accent); color:#fff; font-size:0.65rem; font-weight:700; padding:2px 8px; border-radius:100px; text-transform:uppercase; }
+    .course-info { padding:12px 14px 14px; }
+    .course-channel { display:flex; align-items:center; gap:6px; margin-bottom:5px; }
+    .channel-avatar { width:18px; height:18px; border-radius:50%; background:var(--accent-light); display:flex; align-items:center; justify-content:center; font-size:0.55rem; font-weight:700; color:var(--accent); flex-shrink:0; }
+    .channel-name { font-size:0.7rem; color:var(--ink-muted); font-weight:500; }
+    .course-title { font-size:0.82rem; font-weight:600; line-height:1.35; margin-bottom:8px; color:var(--ink); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .course-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .course-level { font-size:0.65rem; font-weight:700; padding:2px 8px; border-radius:100px; }
+    .course-views { font-size:0.68rem; color:var(--ink-muted); }
+
+    /* Testimonials */
+    #testimonials { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); transition:var(--t); }
+    .testimonials-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+    .tcard { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:28px 26px; transition:transform 0.2s,box-shadow 0.2s,background 0.4s,border-color 0.4s; }
+    .tcard:hover { transform:translateY(-4px); box-shadow:var(--shadow); }
+    .tcard-quote { font-size:2.4rem; color:var(--accent-light); font-family:Georgia,serif; line-height:1; margin-bottom:12px; }
+    .tcard p { font-size:0.9rem; color:var(--ink-muted); line-height:1.7; margin-bottom:20px; font-style:italic; }
+    .tcard-author { display:flex; align-items:center; gap:12px; }
+    .tcard-avatar { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-mid)); display:flex; align-items:center; justify-content:center; font-family:'Righteous',cursive; font-size:0.9rem; color:#fff; flex-shrink:0; }
+    .tcard-name { font-size:0.88rem; font-weight:600; color:var(--ink); }
+    .tcard-role { font-size:0.75rem; color:var(--ink-muted); }
+    .stars { color:#f59e0b; font-size:0.8rem; margin-bottom:12px; letter-spacing:2px; }
+
+    /* FAQ */
+    #faq { background:var(--bg); transition:background 0.4s; }
+    .faq-list { max-width:720px; }
+    .faq-item { border:1px solid var(--border); border-radius:12px; margin-bottom:12px; overflow:hidden; background:var(--surface); transition:var(--t); }
+    .faq-q { width:100%; background:none; border:none; padding:18px 22px; text-align:left; font-family:'DM Sans',sans-serif; font-size:0.95rem; font-weight:600; color:var(--ink); cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:12px; transition:background 0.2s; }
+    .faq-q:hover { background:var(--bg); }
+    .faq-icon { font-size:1.3rem; color:var(--accent); transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1); flex-shrink:0; }
+    .faq-item.open .faq-icon { transform:rotate(45deg); }
+    .faq-a { max-height:0; overflow:hidden; transition:max-height 0.4s ease; }
+    .faq-item.open .faq-a { max-height:220px; }
+    .faq-a-inner { padding:0 22px 18px; font-size:0.9rem; color:var(--ink-muted); line-height:1.75; }
+
+    /* Tag showcase */
+    .tag-showcase { background:var(--surface2); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:48px; transition:var(--t); }
+    .tag-showcase-inner { max-width:1140px; margin:0 auto; }
+    .tag-showcase h3 { font-family:'Righteous',cursive; font-size:1rem; color:var(--ink-muted); margin-bottom:24px; letter-spacing:0.06em; text-transform:uppercase; }
+    .tag-cloud { display:flex; flex-wrap:wrap; gap:10px; }
+
+    /* Profile panel */
+    .profile-banner { background:linear-gradient(135deg,var(--accent),#1d4d39); padding:40px 48px; }
+    [data-theme="dark"] .profile-banner { background:linear-gradient(135deg,#1a4a35,#0d2a1f); }
+    .profile-banner-inner { max-width:1140px; margin:0 auto; display:flex; align-items:center; gap:24px; }
+    .profile-big-avatar { width:80px; height:80px; border-radius:50%; border:3px solid rgba(255,255,255,0.4); object-fit:cover; }
+    .profile-big-avatar-placeholder { width:80px; height:80px; border-radius:50%; background:rgba(255,255,255,0.2); border:3px solid rgba(255,255,255,0.4); display:flex; align-items:center; justify-content:center; font-family:'Righteous',cursive; font-size:2rem; color:#fff; }
+    .profile-info h2 { font-family:'Righteous',cursive; font-size:1.6rem; color:#fff; margin-bottom:4px; }
+    .profile-info p { font-size:0.88rem; color:rgba(255,255,255,0.75); }
+    .profile-stats-row { display:flex; gap:32px; margin-top:16px; }
+    .profile-stat { text-align:center; }
+    .profile-stat-num { font-family:'Righteous',cursive; font-size:1.4rem; color:#fff; }
+    .profile-stat-label { font-size:0.72rem; color:rgba(255,255,255,0.65); margin-top:2px; }
+
+    /* Credits */
+    #credits { background:var(--ink); padding:100px 48px; transition:var(--t); }
+    .credits-inner { max-width:700px; margin:0 auto; text-align:center; }
+    .credits-built { font-family:'Righteous',cursive; font-size:0.75rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent-mid); margin-bottom:24px; }
+    .credits-avatar { width:92px; height:92px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-mid)); display:flex; align-items:center; justify-content:center; font-family:'Righteous',cursive; font-size:2.4rem; color:#fff; margin:0 auto 26px; animation:pulse 2.5s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 0 5px rgba(116,198,157,0.2),0 0 0 12px rgba(116,198,157,0.07)} 50%{box-shadow:0 0 0 8px rgba(116,198,157,0.15),0 0 0 18px rgba(116,198,157,0.04)} }
+    .credits-name { font-family:'Righteous',cursive; font-size:2.8rem; color:var(--bg); letter-spacing:0.02em; margin-bottom:12px; transition:color 0.4s; }
+    .credits-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(45,106,79,0.3); border:1px solid var(--accent); color:var(--accent-mid); font-size:0.8rem; font-weight:600; padding:7px 22px; border-radius:100px; margin-bottom:38px; }
+    .credits-bio { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-left:3px solid var(--accent-mid); border-radius:var(--radius); padding:28px 32px; margin-bottom:32px; text-align:left; }
+    .credits-bio p { color:#ccc; font-size:0.95rem; line-height:1.9; font-weight:300; }
+    .credits-bio strong { color:var(--bg); font-weight:600; }
+    .credits-bio em { color:var(--accent-mid); font-style:italic; }
+    .credits-chips { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:36px; }
+    .credits-chip { background:rgba(255,255,255,0.06); color:#ccc; font-size:0.8rem; padding:7px 18px; border-radius:100px; border:1px solid rgba(255,255,255,0.1); transition:all 0.2s; }
+    .credits-chip:hover { background:rgba(255,255,255,0.12); transform:translateY(-2px); }
+    .credits-socials { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+    .social-btn { display:inline-flex; align-items:center; gap:9px; text-decoration:none; font-size:0.88rem; font-weight:600; padding:13px 28px; border-radius:100px; transition:all 0.2s; }
+    .social-btn:hover { opacity:0.85; transform:translateY(-3px); }
+    .social-btn.insta { background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045); color:#fff; box-shadow:0 4px 16px rgba(253,29,29,0.3); }
+    .social-btn.github { background:#24292e; color:#fff; border:1px solid rgba(255,255,255,0.15); box-shadow:0 4px 16px rgba(0,0,0,0.3); }
+
+    /* Footer */
+    footer { background:var(--ink); border-top:1px solid var(--border); color:var(--ink-muted); padding:52px 48px 36px; transition:var(--t); }
+    .footer-inner { max-width:1140px; margin:0 auto; }
+    .footer-top { display:grid; grid-template-columns:1.5fr 1fr 1fr; gap:48px; margin-bottom:48px; }
+    .footer-brand h3 { font-family:'Righteous',cursive; font-size:1.4rem; color:var(--bg); margin-bottom:12px; }
+    .footer-brand h3 span { color:var(--accent-mid); }
+    .footer-brand p { font-size:0.85rem; line-height:1.7; max-width:280px; }
+    .footer-col h4 { font-family:'Righteous',cursive; font-size:0.8rem; color:var(--ink-muted); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:16px; }
+    .footer-col a { display:block; text-decoration:none; color:var(--ink-muted); font-size:0.85rem; margin-bottom:10px; transition:color 0.2s; cursor:pointer; }
+    .footer-col a:hover { color:var(--accent-mid); }
+    .footer-divider { border:none; border-top:1px solid var(--border); margin-bottom:24px; }
+    .footer-bottom { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    .footer-copy { font-size:0.8rem; color:var(--ink-muted); font-family:'Righteous',cursive; }
+    .footer-copy span { color:var(--accent-mid); }
+    .footer-love { font-size:0.8rem; color:var(--ink-muted); }
+    .footer-love a { color:var(--accent-mid); text-decoration:none; }
+
+    /* Back to top */
+    #backToTop { position:fixed; bottom:30px; right:30px; z-index:90; width:50px; height:50px; border-radius:50%; background:var(--accent); color:#fff; border:none; cursor:pointer; font-size:1.1rem; box-shadow:0 4px 20px rgba(45,106,79,0.45); display:none; align-items:center; justify-content:center; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); font-family:'Righteous',cursive; }
+    #backToTop:hover { transform:translateY(-4px) scale(1.08); }
+    #backToTop.visible { display:flex; animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+    @keyframes popIn { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
+
+    /* Reveal */
+    .reveal { opacity:0; transform:translateY(30px); transition:opacity 0.65s ease,transform 0.65s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-left { opacity:0; transform:translateX(-30px); transition:opacity 0.65s ease,transform 0.65s ease; }
+    .reveal-left.visible { opacity:1; transform:translateX(0); }
+    .reveal-right { opacity:0; transform:translateX(30px); transition:opacity 0.65s ease,transform 0.65s ease; }
+    .reveal-right.visible { opacity:1; transform:translateX(0); }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+
+    /* Responsive */
+    @media(max-width:960px){
+      nav{padding:0 24px}
+      .nav-center,.nav-cta{display:none}
+      .hamburger{display:flex}
+      .nav-right{gap:10px}
+      .hero{grid-template-columns:1fr;gap:40px;padding:48px 24px 60px}
+      .hero-visual{display:none}
+      .features-grid,.testimonials-grid{grid-template-columns:1fr 1fr}
+      .tracker-grid{grid-template-columns:1fr}
+      .journey-steps{grid-template-columns:1fr 1fr;gap:32px}
+      .journey-steps::before{display:none}
+      .stats-strip{gap:40px;padding:32px 24px}
+      .courses-grid{grid-template-columns:1fr 1fr}
+      .section,.tracker-inner{padding:64px 24px}
+      #credits{padding:64px 24px}
+      .guide-wrap,.tag-showcase{padding:20px 24px}
+      .footer-top{grid-template-columns:1fr 1fr;gap:36px}
+      .footer-brand{grid-column:1/-1}
+      footer{padding:40px 24px 28px}
+      .profile-banner{padding:28px 24px}
+    }
+    @media(max-width:600px){
+      .features-grid,.testimonials-grid{grid-template-columns:1fr}
+      .journey-steps{grid-template-columns:1fr}
+      .courses-grid{grid-template-columns:1fr 1fr}
+      .filter-btn{font-size:0.78rem;padding:8px 14px}
+      .add-skill-form{flex-direction:column}
+      .add-skill-form input,.add-skill-form select,.add-skill-form button{width:100%}
+      h1{font-size:2.1rem}
+      #backToTop{bottom:20px;right:20px}
+      .footer-top{grid-template-columns:1fr}
+      .footer-bottom{flex-direction:column;text-align:center}
+      .profile-stats-row{gap:20px}
+      .login-card{padding:36px 28px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ LOGIN PAGE ═══════════════════════════ -->
+<div id="loginPage" class="login-page">
+  <button class="login-theme-btn" onclick="toggleThemeBtn()">
+    <span id="loginThemeIcon">🌙</span> Dark Mode
+  </button>
+
+  <div class="login-card">
+    <div class="login-logo">OG<span>skills</span></div>
+    <p class="login-tagline">Discover your tech skills. Own your journey.</p>
+
+    <!-- Google Sign In -->
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/>
+      Continue with Google
+    </button>
+
+    <div class="login-sep"><span>or sign in with email</span></div>
+
+    <!-- Email/Password form -->
+    <div id="loginForm">
+      <div id="loginError" class="error-msg"></div>
+      <div class="input-group">
+        <label>Email address</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com"/>
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter your password"/>
+      </div>
+      <button class="auth-btn" onclick="signInWithEmail()">Sign In →</button>
+      <p class="auth-switch">Don't have an account? <a onclick="showSignup()">Create one free</a></p>
+    </div>
+
+    <!-- Sign Up form (hidden by default) -->
+    <div id="signupForm" style="display:none">
+      <div id="signupError" class="error-msg"></div>
+      <div class="input-group">
+        <label>Your Name</label>
+        <input type="text" id="signupName" placeholder="Ayush Kamble"/>
+      </div>
+      <div class="input-group">
+        <label>Username</label>
+        <input type="text" id="signupUsername" placeholder="@ayushog"/>
+      </div>
+      <div class="input-group">
+        <label>Email address</label>
+        <input type="email" id="signupEmail" placeholder="you@example.com"/>
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" id="signupPassword" placeholder="Min 6 characters"/>
+      </div>
+      <button class="auth-btn" onclick="signUpWithEmail()">Create Account →</button>
+      <p class="auth-switch">Already have an account? <a onclick="showLogin()">Sign in</a></p>
+    </div>
+
+    <div class="login-features">
+      <div class="login-feat"><div class="login-feat-icon">📊</div><p>Track your skills</p></div>
+      <div class="login-feat"><div class="login-feat-icon">🎬</div><p>Free courses</p></div>
+      <div class="login-feat"><div class="login-feat-icon">🏆</div><p>Save progress</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MAIN APP ═══════════════════════════ -->
+<div id="mainApp" style="display:none">
+
+<!-- ANNOUNCE BAR -->
+<div class="announce-bar" id="announceBar">
+  <span>🎉 OGskills is free forever — </span>
+  <a href="#courses">Explore 17+ free courses →</a>
+  <button class="announce-close" onclick="document.getElementById('announceBar').style.display='none'">✕</button>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="scrollTop()">OG<span>skills</span></div>
+  <ul class="nav-center">
+    <li><a onclick="scrollTo('features')">Features</a></li>
+    <li><a onclick="scrollTo('tracker')">Skill Tracker</a></li>
+    <li><a onclick="scrollTo('journey')">How it Works</a></li>
+    <li><a onclick="scrollTo('courses')">Free Courses</a></li>
+    <li><a onclick="scrollTo('testimonials')">Reviews</a></li>
+    <li><a onclick="scrollTo('faq')">FAQ</a></li>
+    <li><a onclick="scrollTo('credits')">Credits</a></li>
+  </ul>
+  <div class="nav-right">
+    <label class="theme-toggle" title="Toggle theme">
+      <input type="checkbox" id="themeToggle" onchange="toggleTheme(this)"/>
+      <div class="toggle-track"></div>
+      <div class="toggle-thumb" id="toggleThumb">☀️</div>
+      <div class="toggle-icons"><span>☀️</span><span>🌙</span></div>
+    </label>
+    <div class="nav-user" onclick="scrollTo('profile-section')" id="navUser">
+      <div class="nav-avatar-placeholder" id="navAvatarPlaceholder">?</div>
+      <span class="nav-username" id="navUsername">User</span>
+    </div>
+    <button class="nav-logout" onclick="logOut()">Sign Out</button>
+  </div>
+  <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-theme-row">
+    <span id="themeLabel">☀️ Light Mode</span>
+    <label class="theme-toggle">
+      <input type="checkbox" id="themeToggleMobile" onchange="toggleThemeMobile(this)"/>
+      <div class="toggle-track"></div>
+      <div class="toggle-thumb" id="toggleThumbMobile">☀️</div>
+      <div class="toggle-icons"><span>☀️</span><span>🌙</span></div>
+    </label>
+  </div>
+  <a onclick="closeMenu();scrollTo('features')">✨ Features</a>
+  <a onclick="closeMenu();scrollTo('tracker')">📊 Skill Tracker</a>
+  <a onclick="closeMenu();scrollTo('journey')">🗺️ How it Works</a>
+  <a onclick="closeMenu();scrollTo('courses')">🎬 Free Courses</a>
+  <a onclick="closeMenu();scrollTo('testimonials')">💬 Reviews</a>
+  <a onclick="closeMenu();scrollTo('faq')">❓ FAQ</a>
+  <a onclick="closeMenu();scrollTo('credits')">👤 Credits</a>
+  <a onclick="logOut()">🚪 Sign Out</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-eyebrow">For College Students · Tech & Coding</div>
+    <h1>Find your path in <em>tech</em>,<br>one skill at a time.</h1>
+    <p class="hero-sub">OGskills helps you discover your tech interests, track what you're learning, and access free courses — all in one place. Built for students on Day One.</p>
+    <div class="beginner-tip">
+      <span style="font-size:1.2rem;flex-shrink:0">💡</span>
+      <p><strong>Just starting out?</strong> No worries! Click any skill you've heard of in the Skill Tracker. No cost. Ever.</p>
+    </div>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="scrollTo('tracker')">📊 Track My Skills</button>
+      <button class="btn-ghost" onclick="scrollTo('courses')">🎬 Free Courses</button>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-avatars"><span>AK</span><span>SR</span><span>PM</span><span>VN</span></div>
+      <div class="trust-text"><strong>500+ students</strong> already tracking<br>⭐⭐⭐⭐⭐ loved by beginners</div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-card">
+      <div class="hero-card-title">📈 Your Progress Overview</div>
+      <div class="skill-row-hero"><div class="skill-label"><span>Web Development</span><span>72%</span></div><div class="bar-track"><div class="bar-fill" style="width:72%"></div></div></div>
+      <div class="skill-row-hero"><div class="skill-label"><span>Python & Data</span><span>58%</span></div><div class="bar-track"><div class="bar-fill" style="width:58%;animation-delay:.15s"></div></div></div>
+      <div class="skill-row-hero"><div class="skill-label"><span>Problem Solving</span><span>85%</span></div><div class="bar-track"><div class="bar-fill" style="width:85%;animation-delay:.3s"></div></div></div>
+      <div class="skill-row-hero"><div class="skill-label"><span>System Design</span><span>34%</span></div><div class="bar-track"><div class="bar-fill" style="width:34%;animation-delay:.45s"></div></div></div>
+      <div class="hero-badges">
+        <span class="hbadge">🔥 5-day streak</span>
+        <span class="hbadge gold">⭐ DSA Achiever</span>
+        <span class="hbadge blue">🎯 4 skills tracked</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee-wrap"><div class="marquee-inner" id="mq1"></div></div>
+
+<div class="stats-strip">
+  <div class="stat"><div class="stat-num">17<span>+</span></div><div class="stat-label">Free YouTube Courses</div></div>
+  <div class="stat"><div class="stat-num">500<span>+</span></div><div class="stat-label">Students Tracking</div></div>
+  <div class="stat"><div class="stat-num">8<span>+</span></div><div class="stat-label">Tech Skill Domains</div></div>
+  <div class="stat"><div class="stat-num">100<span>%</span></div><div class="stat-label">Free — Always</div></div>
+</div>
+
+<div class="guide-wrap">
+  <div class="guide-strip">
+    <div style="font-size:2rem;flex-shrink:0">🧭</div>
+    <div>
+      <h3>New to tech? Use OGskills in 3 simple steps:</h3>
+      <p><strong>Step 1 —</strong> Go to the <strong>Skill Tracker</strong> and tap any skill you've heard of. <strong>Step 2 —</strong> Visit <strong>Free Courses</strong> to start learning on YouTube. <strong>Step 3 —</strong> Come back, update your tracker, watch your progress grow 🌱</p>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE SECTION -->
+<div id="profile-section">
+  <div class="profile-banner">
+    <div class="profile-banner-inner">
+      <div class="profile-big-avatar-placeholder" id="profileAvatar">?</div>
+      <div class="profile-info">
+        <h2 id="profileName">Loading...</h2>
+        <p id="profileEmail">user@email.com</p>
+        <div class="profile-stats-row">
+          <div class="profile-stat"><div class="profile-stat-num" id="profileSkillCount">0</div><div class="profile-stat-label">Skills Tracked</div></div>
+          <div class="profile-stat"><div class="profile-stat-num" id="profileStreak">0🔥</div><div class="profile-stat-label">Day Streak</div></div>
+          <div class="profile-stat"><div class="profile-stat-num" id="profileJoined">—</div><div class="profile-stat-label">Member Since</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-label">What We Offer</div>
+  <h2 class="section-title reveal">Built for the curious,<br>driven student.</h2>
+  <p class="section-sub reveal">Whether you're on Day One or deep into a specialization, OGskills keeps you aware and intentional.</p>
+  <div class="features-grid">
+    <div class="feature-card reveal"><div class="feature-icon">📊</div><h3>Progress Tracker</h3><p>Log your skills, set proficiency levels, and watch your growth unfold with visual progress bars.</p></div>
+    <div class="feature-card reveal" style="transition-delay:0.1s"><div class="feature-icon">🧭</div><h3>Interest Mapping</h3><p>Identify patterns in what you enjoy and get clarity on which tech domains excite you.</p></div>
+    <div class="feature-card reveal" style="transition-delay:0.2s"><div class="feature-icon">🎯</div><h3>Goal Setting</h3><p>Set milestones. Stay motivated with streak tracking and achievement badges.</p></div>
+    <div class="feature-card reveal" style="transition-delay:0.1s"><div class="feature-icon">🗺️</div><h3>Career Alignment</h3><p>See how your skills align with paths like Full Stack Dev, Data Science, or DevOps.</p></div>
+    <div class="feature-card reveal" style="transition-delay:0.2s"><div class="feature-icon">🎬</div><h3>Free YouTube Courses</h3><p>17+ hand-picked free courses — no money, no sign-up, ever.</p></div>
+    <div class="feature-card reveal" style="transition-delay:0.3s"><div class="feature-icon">☁️</div><h3>Cloud Save</h3><p>Your skills are saved to your account via Firebase — access them from any device, anytime.</p></div>
+  </div>
+</section>
+
+<div class="tag-showcase">
+  <div class="tag-showcase-inner">
+    <h3>Skills you can track on OGskills</h3>
+    <div class="tag-cloud" id="tagCloud"></div>
+  </div>
+</div>
+
+<div class="marquee-wrap dark"><div class="marquee-inner" id="mq2"></div></div>
+
+<!-- TRACKER -->
+<section id="tracker">
+  <div class="tracker-inner">
+    <div class="section-label">Interactive Tracker</div>
+    <h2 class="section-title reveal-left">Try the Skill Tracker</h2>
+    <p class="section-sub reveal-left">Tap any skill you've tried or heard of. Your progress saves automatically when you're logged in!</p>
+    <div class="tracker-grid">
+      <div class="reveal-left">
+        <div class="tracker-help"><span>👆</span><span><strong>How to use:</strong> Tap a skill to mark it green. Each skill shows what it means below.</span></div>
+        <div class="domain-card">
+          <div class="domain-header"><span>💻</span><h3>Tech & Coding Skills</h3></div>
+          <div class="domain-body" id="skillList">
+            <div class="skill-item" onclick="toggleSkill(this,'HTML & CSS')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">HTML & CSS</div><div class="skill-sublabel">The language of web pages</div></div></div><span class="skill-level-badge level-beginner">Beginner</span></div>
+            <div class="skill-item" onclick="toggleSkill(this,'JavaScript')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">JavaScript</div><div class="skill-sublabel">Makes websites interactive</div></div></div><span class="skill-level-badge level-intermediate">Intermediate</span></div>
+            <div class="skill-item" onclick="toggleSkill(this,'Python')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Python</div><div class="skill-sublabel">Great first programming language</div></div></div><span class="skill-level-badge level-intermediate">Intermediate</span></div>
+            <div class="skill-item" onclick="toggleSkill(this,'Data Structures & Algorithms')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">DSA</div><div class="skill-sublabel">Problem-solving with code</div></div></div><span class="skill-level-badge level-beginner">Beginner</span></div>
+            <div class="skill-item" onclick="toggleSkill(this,'Git & Version Control')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Git & Version Control</div><div class="skill-sublabel">Track and save your code</div></div></div><span class="skill-level-badge level-advanced">Advanced</span></div>
+            <div class="skill-item" onclick="toggleSkill(this,'React / Frontend Frameworks')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">React / Frameworks</div><div class="skill-sublabel">Build modern websites faster</div></div></div><span class="skill-level-badge level-intermediate">Intermediate</span></div>
+            <div class="skill-item" onclick="toggleSkill(this,'Databases & SQL')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Databases & SQL</div><div class="skill-sublabel">Store and manage data</div></div></div><span class="skill-level-badge level-beginner">Beginner</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal-right">
+        <div class="tracker-panel">
+          <h2>Your Skill Log</h2>
+          <p>Skills you mark appear here. Saved to your account automatically!</p>
+          <div class="progress-overview">
+            <h4>📈 Your Progress</h4>
+            <div class="prog-row"><div class="prog-label"><span>Skills Checked</span><span id="checkedCount">0 / 7</span></div><div class="prog-bar"><div class="prog-fill" id="progressFill" style="width:0%"></div></div></div>
+            <div class="prog-row"><div class="prog-label"><span>🌱 Beginner</span><span id="beginnerCount">0</span></div><div class="prog-bar"><div class="prog-fill" id="beginnerFill" style="width:0%;background:#e9c46a"></div></div></div>
+            <div class="prog-row"><div class="prog-label"><span>🔧 Intermediate</span><span id="intermediateCount">0</span></div><div class="prog-bar"><div class="prog-fill" id="intermediateFill" style="width:0%;background:#74c69d"></div></div></div>
+            <div class="prog-row"><div class="prog-label"><span>⚡ Advanced</span><span id="advancedCount">0</span></div><div class="prog-bar"><div class="prog-fill" id="advancedFill" style="width:0%;background:#2d6a4f"></div></div></div>
+          </div>
+          <p style="font-size:0.82rem;color:var(--ink-muted);margin-bottom:8px;">➕ <strong>Add a skill not listed above:</strong></p>
+          <div class="add-skill-form">
+            <input type="text" id="customSkill" placeholder="e.g. Java, Flutter, Linux..."/>
+            <select id="customLevel"><option value="Beginner">🌱 Beginner</option><option value="Intermediate">🔧 Intermediate</option><option value="Advanced">⚡ Advanced</option></select>
+            <button onclick="addCustomSkill()">Add</button>
+          </div>
+          <div class="skills-log" id="skillsLog"><p style="color:var(--ink-muted);font-size:0.85rem;text-align:center;padding:28px 0;">No skills logged yet.<br>👆 Tap a skill to start!</p></div>
+          <button class="save-skills-btn" id="saveSkillsBtn" onclick="saveSkillsToFirebase()">
+            ☁️ Save Skills to My Account
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="journey">
+  <div class="section-label">How It Works</div>
+  <h2 class="section-title reveal">Your journey in four steps.</h2>
+  <p class="section-sub reveal">Simple and useful — even if today is Day One.</p>
+  <div class="journey-steps">
+    <div class="step reveal"><div class="step-num">1</div><h4>Sign Up Free</h4><p>Create your free account with Google or email in seconds.</p></div>
+    <div class="step reveal" style="transition-delay:0.1s"><div class="step-num">2</div><h4>Tap Your Skills</h4><p>Click skills you've tried or heard of. They save to your account.</p></div>
+    <div class="step reveal" style="transition-delay:0.2s"><div class="step-num">3</div><h4>Watch Free Courses</h4><p>Click any course thumbnail to watch on YouTube for free.</p></div>
+    <div class="step reveal" style="transition-delay:0.3s"><div class="step-num">4</div><h4>Track Your Growth</h4><p>Come back anytime. Your progress is always saved and waiting.</p></div>
+  </div>
+</section>
+
+<!-- COURSES -->
+<section class="section reveal" id="courses">
+  <div class="section-label">Free YouTube Resources</div>
+  <h2 class="section-title">Learn from the best,<br>completely free.</h2>
+  <p class="section-sub">Click any thumbnail to watch on YouTube. No sign-up, no cost, ever.</p>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterCourses('all',this)">All</button>
+    <button class="filter-btn" onclick="filterCourses('webdev',this)">🌐 Web Dev</button>
+    <button class="filter-btn" onclick="filterCourses('python',this)">🐍 Python</button>
+    <button class="filter-btn" onclick="filterCourses('dsa',this)">🧠 DSA</button>
+    <button class="filter-btn" onclick="filterCourses('git',this)">🔀 Git</button>
+    <button class="filter-btn" onclick="filterCourses('react',this)">⚛️ React</button>
+    <button class="filter-btn" onclick="filterCourses('database',this)">🗄️ Database</button>
+    <button class="filter-btn" onclick="filterCourses('linux',this)">🐧 Linux</button>
+    <button class="filter-btn" onclick="filterCourses('ai',this)">🤖 AI/ML</button>
+  </div>
+  <div class="courses-grid" id="coursesGrid">
+    <div class="course-card" data-cat="webdev" onclick="openCourse('mU6anWqZJcc')"><div class="course-thumb"><img src="https://img.youtube.com/vi/mU6anWqZJcc/mqdefault.jpg" loading="lazy" alt="HTML"/><div class="course-category-tag">Web Dev</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">2:02:37</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">HTML Full Course — Build a Website Tutorial</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">8.1M views</span></div></div></div>
+    <div class="course-card" data-cat="webdev" onclick="openCourse('1Rs2ND1ryYc')"><div class="course-thumb"><img src="https://img.youtube.com/vi/1Rs2ND1ryYc/mqdefault.jpg" loading="lazy" alt="CSS"/><div class="course-category-tag">Web Dev</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">6:18:37</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">CSS Tutorial — Zero to Hero (Complete Course)</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">3.2M views</span></div></div></div>
+    <div class="course-card" data-cat="webdev" onclick="openCourse('PkZNo7MFNFg')"><div class="course-thumb"><img src="https://img.youtube.com/vi/PkZNo7MFNFg/mqdefault.jpg" loading="lazy" alt="JS"/><div class="course-category-tag">Web Dev</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">3:26:42</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Learn JavaScript — Full Course for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">10M views</span></div></div></div>
+    <div class="course-card" data-cat="python" onclick="openCourse('rfscVS0vtbw')"><div class="course-thumb"><img src="https://img.youtube.com/vi/rfscVS0vtbw/mqdefault.jpg" loading="lazy" alt="Python"/><div class="course-category-tag">Python</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">4:26:52</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Learn Python — Full Course for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">12M views</span></div></div></div>
+    <div class="course-card" data-cat="python" onclick="openCourse('LHBE3CIBFe8')"><div class="course-thumb"><img src="https://img.youtube.com/vi/LHBE3CIBFe8/mqdefault.jpg" loading="lazy" alt="Python"/><div class="course-category-tag">Python</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">13:37:30</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Python for Everybody — Full University Course</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">6.4M views</span></div></div></div>
+    <div class="course-card" data-cat="python ai" onclick="openCourse('i_LwzRVP7bg')"><div class="course-thumb"><img src="https://img.youtube.com/vi/i_LwzRVP7bg/mqdefault.jpg" loading="lazy" alt="ML"/><div class="course-category-tag">Python</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">10:52:27</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Machine Learning with Python — Full Course</div><div class="course-meta"><span class="course-level level-intermediate">Intermediate</span><span class="course-views">3.8M views</span></div></div></div>
+    <div class="course-card" data-cat="dsa" onclick="openCourse('pkYVOmU3MgA')"><div class="course-thumb"><img src="https://img.youtube.com/vi/pkYVOmU3MgA/mqdefault.jpg" loading="lazy" alt="DSA"/><div class="course-category-tag">DSA</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">9:54:38</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Data Structures & Algorithms in Python</div><div class="course-meta"><span class="course-level level-intermediate">Intermediate</span><span class="course-views">3.4M views</span></div></div></div>
+    <div class="course-card" data-cat="dsa" onclick="openCourse('8hly31xKli0')"><div class="course-thumb"><img src="https://img.youtube.com/vi/8hly31xKli0/mqdefault.jpg" loading="lazy" alt="DSA"/><div class="course-category-tag">DSA</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">5:22:04</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Algorithms and Data Structures — Full Tutorial</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">2.9M views</span></div></div></div>
+    <div class="course-card" data-cat="git" onclick="openCourse('RGOj5yH7evk')"><div class="course-thumb"><img src="https://img.youtube.com/vi/RGOj5yH7evk/mqdefault.jpg" loading="lazy" alt="Git"/><div class="course-category-tag">Git</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">1:08:29</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Git and GitHub for Beginners — Crash Course</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">8.9M views</span></div></div></div>
+    <div class="course-card" data-cat="git" onclick="openCourse('USjZcfj8yxE')"><div class="course-thumb"><img src="https://img.youtube.com/vi/USjZcfj8yxE/mqdefault.jpg" loading="lazy" alt="Git"/><div class="course-category-tag">Git</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">15:59</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">CS</div><span class="channel-name">Colt Steele</span></div><div class="course-title">Learn Git In 15 Minutes</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">1.8M views</span></div></div></div>
+    <div class="course-card" data-cat="react" onclick="openCourse('bMknfKXIFA8')"><div class="course-thumb"><img src="https://img.youtube.com/vi/bMknfKXIFA8/mqdefault.jpg" loading="lazy" alt="React"/><div class="course-category-tag">React</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">11:55:27</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">React Course — Full Tutorial for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">6.7M views</span></div></div></div>
+    <div class="course-card" data-cat="react" onclick="openCourse('SqcY0GlETPk')"><div class="course-thumb"><img src="https://img.youtube.com/vi/SqcY0GlETPk/mqdefault.jpg" loading="lazy" alt="React"/><div class="course-category-tag">React</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">1:22:46</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">PM</div><span class="channel-name">Programming with Mosh</span></div><div class="course-title">React Tutorial for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">4.1M views</span></div></div></div>
+    <div class="course-card" data-cat="database" onclick="openCourse('HXV3zeQKqGY')"><div class="course-thumb"><img src="https://img.youtube.com/vi/HXV3zeQKqGY/mqdefault.jpg" loading="lazy" alt="SQL"/><div class="course-category-tag">Database</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">4:20:02</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">SQL Tutorial — Full Database Course for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">7.1M views</span></div></div></div>
+    <div class="course-card" data-cat="database" onclick="openCourse('7S_tz1z_5bA')"><div class="course-thumb"><img src="https://img.youtube.com/vi/7S_tz1z_5bA/mqdefault.jpg" loading="lazy" alt="MySQL"/><div class="course-category-tag">Database</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">3:10:00</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">PM</div><span class="channel-name">Programming with Mosh</span></div><div class="course-title">MySQL Tutorial for Beginners — Full Course</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">5.2M views</span></div></div></div>
+    <div class="course-card" data-cat="linux" onclick="openCourse('sWbUDq4S6Y8')"><div class="course-thumb"><img src="https://img.youtube.com/vi/sWbUDq4S6Y8/mqdefault.jpg" loading="lazy" alt="Linux"/><div class="course-category-tag">Linux</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">5:22:37</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Linux Command Line Full Course for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">4.5M views</span></div></div></div>
+    <div class="course-card" data-cat="ai" onclick="openCourse('aircAruvnKk')"><div class="course-thumb"><img src="https://img.youtube.com/vi/aircAruvnKk/mqdefault.jpg" loading="lazy" alt="Neural"/><div class="course-category-tag">AI / ML</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">19:13</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">3B</div><span class="channel-name">3Blue1Brown</span></div><div class="course-title">Neural Networks — Visual Explainer Series</div><div class="course-meta"><span class="course-level level-intermediate">Intermediate</span><span class="course-views">14M views</span></div></div></div>
+    <div class="course-card" data-cat="ai" onclick="openCourse('tPYj3fFJGjk')"><div class="course-thumb"><img src="https://img.youtube.com/vi/tPYj3fFJGjk/mqdefault.jpg" loading="lazy" alt="TF"/><div class="course-category-tag">AI / ML</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">6:54:00</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">TensorFlow 2.0 Complete Course — Neural Networks</div><div class="course-meta"><span class="course-level level-advanced">Advanced</span><span class="course-views">2.1M views</span></div></div></div>
+  </div>
+</section>
+
+<div class="marquee-wrap"><div class="marquee-inner" id="mq3"></div></div>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="section">
+    <div class="section-label">Student Reviews</div>
+    <h2 class="section-title reveal">Loved by students across India.</h2>
+    <p class="section-sub reveal">Real feedback from students who started with OGskills.</p>
+    <div class="testimonials-grid">
+      <div class="tcard reveal"><div class="stars">★★★★★</div><div class="tcard-quote">"</div><p>OGskills was the first thing that made me feel like I actually knew where to start. The skill tracker is so powerful for a beginner like me.</p><div class="tcard-author"><div class="tcard-avatar">SR</div><div><div class="tcard-name">Sneha Rao</div><div class="tcard-role">1st Year CSE · Pune</div></div></div></div>
+      <div class="tcard reveal" style="transition-delay:0.1s"><div class="stars">★★★★★</div><div class="tcard-quote">"</div><p>I had no idea what HTML, Python, or DSA even meant. After 2 weeks I've already finished 2 YouTube courses. The free courses section is gold!</p><div class="tcard-author"><div class="tcard-avatar">AM</div><div><div class="tcard-name">Arjun Mehta</div><div class="tcard-role">1st Year IT · Mumbai</div></div></div></div>
+      <div class="tcard reveal" style="transition-delay:0.2s"><div class="stars">★★★★★</div><div class="tcard-quote">"</div><p>As someone who started coding at 18 with zero background, OGskills felt like it was made exactly for me. The beginner tips are so helpful!</p><div class="tcard-author"><div class="tcard-avatar">PK</div><div><div class="tcard-name">Priya Kulkarni</div><div class="tcard-role">Diploma CE · Nashik</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="section">
+    <div class="section-label">Got Questions?</div>
+    <h2 class="section-title reveal">Frequently Asked Questions.</h2>
+    <p class="section-sub reveal">Everything you need to know about OGskills.</p>
+    <div class="faq-list">
+      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Is OGskills really free? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">Yes, 100% free. Always. OGskills was built by a student for students. No paid plans, no hidden fees, no ads.</div></div></div>
+      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">I'm a complete beginner — is this for me? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">Absolutely! OGskills was literally designed for beginners. Even if you've never written a single line of code, you can start using it right now.</div></div></div>
+      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">How does the login and database work? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">OGskills uses Firebase — Google's free cloud database. When you sign in and tap "Save Skills", your tracked skills are saved securely to your personal account and can be loaded back any time.</div></div></div>
+      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Why do videos open on YouTube? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">YouTube restricts embedding on many educational videos. Opening them on YouTube gives you full HD, subtitles, and zero errors every time!</div></div></div>
+      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Can I add my own custom skills? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">Yes! Type any skill in the "Add a skill" box in the tracker, choose your level, and hit Add. It saves with all your other skills.</div></div></div>
+      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Who built OGskills? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">OGskills was built by Ayush Kamble, a first-year Computer Engineering student at Government Polytechnic Pune — his very first web project.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CREDITS -->
+<section id="credits">
+  <div class="credits-inner">
+    <div class="credits-built">Built By</div>
+    <div class="credits-avatar">A</div>
+    <div class="credits-name">Ayush Kamble</div>
+    <div class="credits-badge"><span>🎓</span> First Year · Computer Engineering Student</div>
+    <div class="credits-bio">
+      <p>Hi, I'm <strong>Ayush Kamble</strong> — a first-year Computer Engineering student at <strong style="color:var(--accent-mid)">Government Polytechnic Pune</strong>.<br><br>
+      I have <em>just begun my journey</em> in the world of tech. OGskills is one of my very first steps — born from the question every new student asks: <strong style="color:var(--bg)">"Where do I even start?"</strong><br><br>
+      This is <em>Day One</em> of something I hope will grow. The curiosity is real, the grind has just started, and the road ahead is wide open. 🚀</p>
+    </div>
+    <div class="credits-chips">
+      <span class="credits-chip">📍 Pune, Maharashtra</span>
+      <span class="credits-chip">🎓 Govt. Polytechnic Pune</span>
+      <span class="credits-chip">💻 Year 1 · CE</span>
+      <span class="credits-chip">🌱 Just Getting Started</span>
+    </div>
+    <div class="credits-socials">
+      <a href="https://instagram.com/evo.ayush" target="_blank" class="social-btn insta">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        @evo.ayush
+      </a>
+      <a href="https://github.com/KamAyu2" target="_blank" class="social-btn github">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        KamAyu2
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand"><h3>OG<span>skills</span></h3><p>A free platform for college students to discover their tech skills, track their learning, and access the best free resources.</p></div>
+      <div class="footer-col"><h4>Navigate</h4><a onclick="scrollTo('features')">Features</a><a onclick="scrollTo('tracker')">Skill Tracker</a><a onclick="scrollTo('journey')">How it Works</a><a onclick="scrollTo('courses')">Free Courses</a></div>
+      <div class="footer-col"><h4>Connect</h4><a href="https://instagram.com/evo.ayush" target="_blank">Instagram</a><a href="https://github.com/KamAyu2" target="_blank">GitHub</a><a onclick="scrollTo('credits')">About the Creator</a><a onclick="scrollTo('faq')">FAQ</a></div>
+    </div>
+    <hr class="footer-divider"/>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 <span>OGskills</span> · Made in Pune 🇮🇳</div>
+      <div class="footer-love">Built with ♥ by Ayush Kamble · <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Back to top</a></div>
+    </div>
+  </div>
+</footer>
+
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+</div><!-- end mainApp -->
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════ FIREBASE + APP SCRIPT ═══════ -->
+<script type="module">
+  // ════════════════════════════════════════════════
+  // 🔥 PASTE YOUR FIREBASE CONFIG BELOW
+  // Get it from: console.firebase.google.com
+  //   → Create Project → Add Web App → Copy config
+  // Also enable:
+  //   - Authentication → Google + Email/Password
+  //   - Firestore Database → Start in test mode
+  // ════════════════════════════════════════════════
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  // Expose to global scope for onclick handlers
+  window._auth = auth;
+  window._db = db;
+  window._provider = provider;
+  window._createUserWithEmail = createUserWithEmailAndPassword;
+  window._signInWithEmail = signInWithEmailAndPassword;
+  window._signInWithPopup = signInWithPopup;
+  window._signOut = signOut;
+  window._doc = doc;
+  window._setDoc = setDoc;
+  window._getDoc = getDoc;
+  window._serverTimestamp = serverTimestamp;
+  window._updateProfile = updateProfile;
+
+  // Auth state observer
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('mainApp').style.display = 'block';
+      window._currentUser = user;
+      updateNavUser(user);
+      updateProfileBanner(user);
+      await loadUserSkills(user.uid);
+    } else {
+      document.getElementById('loginPage').style.display = 'flex';
+      document.getElementById('mainApp').style.display = 'none';
+      window._currentUser = null;
+    }
+  });
+
+  async function loadUserSkills(uid) {
+    try {
+      const snap = await getDoc(doc(db, 'users', uid));
+      if (snap.exists()) {
+        const data = snap.data();
+        const skills = data.skills || {};
+        // Restore checked skills
+        Object.keys(skills).forEach(name => {
+          document.querySelectorAll('.skill-item').forEach(el => {
+            if (el.querySelector('.skill-name')?.textContent === name) {
+              el.classList.add('selected');
+              el.querySelector('.skill-dot').style.cssText = 'background:var(--accent);border-color:var(--accent);transform:scale(1.2)';
+            }
+          });
+          window._loggedSkills = window._loggedSkills || {};
+          window._loggedSkills[name] = skills[name];
+        });
+        if (Object.keys(skills).length) {
+          renderLog(); updateProgress();
+        }
+        // Update profile stats
+        document.getElementById('profileSkillCount').textContent = Object.keys(skills).length;
+        if (data.joinedAt) {
+          const d = data.joinedAt.toDate();
+          document.getElementById('profileJoined').textContent = d.toLocaleDateString('en-IN',{month:'short',year:'numeric'});
+        }
+      }
+    } catch(e) { console.log('Skills not loaded:', e.message); }
+  }
+  window._loadUserSkills = loadUserSkills;
+</script>
+
+<script>
+  // ── HELPERS ──
+  function showToast(msg, duration=3000) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+  }
+
+  function scrollTo(id) { document.getElementById(id)?.scrollIntoView({behavior:'smooth'}); }
+  function scrollTop() { window.scrollTo({top:0,behavior:'smooth'}); }
+
+  // ── AUTH HANDLERS ──
+  window.signInWithGoogle = async function() {
+    try {
+      const result = await window._signInWithPopup(window._auth, window._provider);
+      const user = result.user;
+      await saveUserToFirestore(user, user.displayName || 'User', '');
+      showToast('👋 Welcome, ' + (user.displayName || 'there') + '!');
+    } catch(e) {
+      showToast('❌ ' + (e.message.includes('popup') ? 'Popup blocked. Try again.' : e.message));
+    }
+  };
+
+  window.signInWithEmail = async function() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+    const err = document.getElementById('loginError');
+    err.style.display = 'none';
+    if (!email || !pass) { err.textContent='Please fill in all fields.'; err.style.display='block'; return; }
+    try {
+      await window._signInWithEmail(window._auth, email, pass);
+      showToast('✅ Signed in successfully!');
+    } catch(e) {
+      err.textContent = e.code === 'auth/user-not-found' ? 'No account found. Please sign up.' :
+                        e.code === 'auth/wrong-password' ? 'Wrong password. Try again.' :
+                        e.code === 'auth/invalid-credential' ? 'Invalid email or password.' : e.message;
+      err.style.display = 'block';
+    }
+  };
+
+  window.signUpWithEmail = async function() {
+    const name = document.getElementById('signupName').value.trim();
+    const username = document.getElementById('signupUsername').value.trim().replace('@','');
+    const email = document.getElementById('signupEmail').value.trim();
+    const pass = document.getElementById('signupPassword').value;
+    const err = document.getElementById('signupError');
+    err.style.display = 'none';
+    if (!name || !username || !email || !pass) { err.textContent='Please fill in all fields.'; err.style.display='block'; return; }
+    if (pass.length < 6) { err.textContent='Password must be at least 6 characters.'; err.style.display='block'; return; }
+    try {
+      const result = await window._createUserWithEmail(window._auth, email, pass);
+      await window._updateProfile(result.user, { displayName: name });
+      await saveUserToFirestore(result.user, name, username);
+      showToast('🎉 Account created! Welcome, ' + name + '!');
+    } catch(e) {
+      err.textContent = e.code === 'auth/email-already-in-use' ? 'Email already registered. Please sign in.' : e.message;
+      err.style.display = 'block';
+    }
+  };
+
+  async function saveUserToFirestore(user, name, username) {
+    try {
+      const userRef = window._doc(window._db, 'users', user.uid);
+      const snap = await window._getDoc(userRef);
+      if (!snap.exists()) {
+        await window._setDoc(userRef, {
+          uid: user.uid,
+          name: name || user.displayName || 'User',
+          username: username || '',
+          email: user.email,
+          photoURL: user.photoURL || '',
+          skills: {},
+          joinedAt: window._serverTimestamp(),
+          streak: 0
+        });
+      }
+    } catch(e) { console.log('Firestore save error:', e.message); }
+  }
+
+  window.logOut = async function() {
+    await window._signOut(window._auth);
+    window._loggedSkills = {};
+    showToast('👋 Signed out. See you soon!');
+  };
+
+  window.saveSkillsToFirebase = async function() {
+    if (!window._currentUser) { showToast('⚠️ Please sign in first.'); return; }
+    const btn = document.getElementById('saveSkillsBtn');
+    btn.classList.add('saving'); btn.textContent = '⏳ Saving...';
+    try {
+      const userRef = window._doc(window._db, 'users', window._currentUser.uid);
+      await window._setDoc(userRef, { skills: window._loggedSkills || {}, lastUpdated: window._serverTimestamp() }, { merge: true });
+      showToast('✅ Skills saved to your account!');
+      document.getElementById('profileSkillCount').textContent = Object.keys(window._loggedSkills||{}).length;
+    } catch(e) {
+      showToast('❌ Save failed: ' + e.message);
+    }
+    btn.classList.remove('saving'); btn.textContent = '☁️ Save Skills to My Account';
+  };
+
+  function updateNavUser(user) {
+    document.getElementById('navUsername').textContent = (user.displayName || 'User').split(' ')[0];
+    const ph = document.getElementById('navAvatarPlaceholder');
+    if (user.photoURL) {
+      ph.outerHTML = `<img class="nav-avatar" id="navAvatarPlaceholder" src="${user.photoURL}" alt="avatar"/>`;
+    } else {
+      ph.textContent = (user.displayName || 'U')[0].toUpperCase();
+    }
+  }
+
+  function updateProfileBanner(user) {
+    document.getElementById('profileName').textContent = user.displayName || 'User';
+    document.getElementById('profileEmail').textContent = user.email;
+    const av = document.getElementById('profileAvatar');
+    if (user.photoURL) {
+      av.outerHTML = `<img class="profile-big-avatar" id="profileAvatar" src="${user.photoURL}" alt="avatar"/>`;
+    } else {
+      av.textContent = (user.displayName || 'U')[0].toUpperCase();
+    }
+  }
+
+  // ── AUTH FORM TOGGLE ──
+  window.showSignup = function() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('signupForm').style.display = 'block';
+  };
+  window.showLogin = function() {
+    document.getElementById('signupForm').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+  };
+
+  // ── THEME ──
+  let isDark = false;
+  function applyTheme(dark) {
+    isDark = dark;
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    const t = document.getElementById('toggleThumb');
+    const tm = document.getElementById('toggleThumbMobile');
+    const tl = document.getElementById('themeLabel');
+    const li = document.getElementById('loginThemeIcon');
+    if (t) t.textContent = dark ? '🌙' : '☀️';
+    if (tm) tm.textContent = dark ? '🌙' : '☀️';
+    if (tl) tl.textContent = dark ? '🌙 Dark Mode' : '☀️ Light Mode';
+    if (li) li.textContent = dark ? '☀️' : '🌙';
+    const tog = document.getElementById('themeToggle');
+    const togm = document.getElementById('themeToggleMobile');
+    if (tog) tog.checked = dark;
+    if (togm) togm.checked = dark;
+    localStorage.setItem('ogskills-theme', dark ? 'dark' : 'light');
+  }
+  window.toggleTheme = (cb) => applyTheme(cb.checked);
+  window.toggleThemeMobile = (cb) => applyTheme(cb.checked);
+  window.toggleThemeBtn = () => applyTheme(!isDark);
+  const saved = localStorage.getItem('ogskills-theme');
+  if (saved === 'dark') applyTheme(true);
+
+  // ── MARQUEES ──
+  const mq1items = ['HTML & CSS 🌐','JavaScript ⚡','Python 🐍','React ⚛️','Git & GitHub 🔀','SQL 🗄️','DSA 🧠','Machine Learning 🤖','Linux 🐧','TypeScript 📘','Node.js 🟢','Docker 🐳','Cloud ☁️','REST APIs 🔗','Figma 🎭','Problem Solving 🎯'];
+  const mq2items = ['Full Stack Dev 🖥️','Data Scientist 📊','DevOps Engineer ⚙️','UI/UX Designer 🎨','ML Engineer 🤖','Backend Dev 🔧','Mobile Dev 📱','Cloud Architect ☁️','Cybersecurity 🔐','Game Dev 🎮','AI Researcher 🧬'];
+  const mq3items = ['VS Code 💻','GitHub 🐙','Figma 🎭','Postman 📬','Docker 🐳','MongoDB 🍃','Firebase 🔥','AWS ☁️','Linux 🐧','React ⚛️','Node.js 🟢','TailwindCSS 🌊','PostgreSQL 🐘','Redis 🔴'];
+
+  function buildMarquee(id, items) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = [...items,...items].map(t=>`<span class="marquee-item">${t}<span class="dot">✦</span></span>`).join('');
+  }
+  buildMarquee('mq1', mq1items);
+  buildMarquee('mq2', mq2items);
+  buildMarquee('mq3', mq3items);
+
+  // ── TAG CLOUD ──
+  const tagData = [
+    {label:'HTML & CSS',cls:'tag-green'},{label:'JavaScript',cls:'tag-gold'},{label:'Python',cls:'tag-blue'},
+    {label:'React',cls:'tag-purple'},{label:'Git',cls:'tag-red'},{label:'SQL',cls:'tag-blue'},
+    {label:'DSA',cls:'tag-green'},{label:'Machine Learning',cls:'tag-purple'},{label:'Linux',cls:'tag-gold'},
+    {label:'TypeScript',cls:'tag-blue'},{label:'Node.js',cls:'tag-green'},{label:'Docker',cls:'tag-blue'},
+    {label:'Cloud',cls:'tag-purple'},{label:'REST APIs',cls:'tag-red'},{label:'Figma',cls:'tag-purple'},
+    {label:'MongoDB',cls:'tag-green'},{label:'Firebase',cls:'tag-gold'},{label:'TailwindCSS',cls:'tag-blue'},
+    {label:'C++',cls:'tag-red'},{label:'Java',cls:'tag-gold'},{label:'Flutter',cls:'tag-blue'},{label:'Kubernetes',cls:'tag-purple'},
+  ];
+  const tc = document.getElementById('tagCloud');
+  if (tc) tagData.forEach((t,i) => {
+    const s = document.createElement('span');
+    s.className=`tag ${t.cls}`; s.textContent=t.label;
+    s.style.animationDelay=`${i*0.04}s`; tc.appendChild(s);
+  });
+
+  // ── NAV ──
+  window.toggleMenu = function() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+    document.getElementById('hamburger').classList.toggle('open');
+  };
+  window.closeMenu = function() {
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+  };
+
+  // ── BACK TO TOP ──
+  window.addEventListener('scroll', () => {
+    document.getElementById('backToTop')?.classList.toggle('visible', window.scrollY > 500);
+  });
+
+  // ── SCROLL REVEAL ──
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);} });
+  }, {threshold:0.1});
+  document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el => obs.observe(el));
+
+  // ── TRACKER ──
+  window._loggedSkills = {};
+
+  window.toggleSkill = function(el, name) {
+    if (el.classList.contains('selected')) {
+      el.classList.remove('selected');
+      delete window._loggedSkills[name];
+    } else {
+      el.classList.add('selected');
+      window._loggedSkills[name] = el.querySelector('.skill-level-badge')?.textContent.trim() || 'Beginner';
+    }
+    renderLog(); updateProgress();
+  };
+
+  function renderLog() {
+    const c = document.getElementById('skillsLog');
+    const names = Object.keys(window._loggedSkills);
+    if (!names.length) { c.innerHTML='<p style="color:var(--ink-muted);font-size:0.85rem;text-align:center;padding:28px 0;">No skills logged yet.<br>👆 Tap a skill to start!</p>'; return; }
+    const icons = {Beginner:'🌱',Intermediate:'🔧',Advanced:'⚡'};
+    c.innerHTML = names.map(n=>`<div class="log-entry"><div class="log-entry-left"><span style="font-size:1rem">${icons[window._loggedSkills[n]]||'📌'}</span><div><div class="log-name">${n}</div><div class="log-date">${window._loggedSkills[n]} · Added today</div></div></div><button class="log-remove" onclick="removeSkill('${n}')">✕</button></div>`).join('');
+  }
+
+  window.removeSkill = function(name) {
+    delete window._loggedSkills[name];
+    document.querySelectorAll('.skill-item').forEach(el=>{if(el.querySelector('.skill-name')?.textContent===name)el.classList.remove('selected');});
+    renderLog(); updateProgress();
+  };
+
+  function updateProgress() {
+    const total = document.querySelectorAll('#skillList .skill-item').length;
+    const checked = Object.keys(window._loggedSkills).length;
+    document.getElementById('checkedCount').textContent=`${checked} / ${total}`;
+    document.getElementById('progressFill').style.width=(total?Math.round(checked/total*100):0)+'%';
+    const levels = Object.values(window._loggedSkills);
+    const b=levels.filter(l=>l==='Beginner').length;
+    const i=levels.filter(l=>l==='Intermediate').length;
+    const a=levels.filter(l=>l==='Advanced').length;
+    document.getElementById('beginnerCount').textContent=b;
+    document.getElementById('intermediateCount').textContent=i;
+    document.getElementById('advancedCount').textContent=a;
+    const mx=Math.max(b,i,a,1);
+    document.getElementById('beginnerFill').style.width=(b/mx*100)+'%';
+    document.getElementById('intermediateFill').style.width=(i/mx*100)+'%';
+    document.getElementById('advancedFill').style.width=(a/mx*100)+'%';
+    document.getElementById('profileSkillCount').textContent=checked;
+  }
+
+  window.addCustomSkill = function() {
+    const input=document.getElementById('customSkill');
+    const name=input.value.trim();
+    if(!name){input.focus();return;}
+    const level=document.getElementById('customLevel').value;
+    const cls={Beginner:'level-beginner',Intermediate:'level-intermediate',Advanced:'level-advanced'}[level];
+    const div=document.createElement('div');
+    div.className='skill-item selected';
+    div.innerHTML=`<div class="skill-item-left"><div class="skill-dot" style="background:var(--accent);border-color:var(--accent);transform:scale(1.2)"></div><div><div class="skill-name">${name}</div><div class="skill-sublabel">Custom skill</div></div></div><span class="skill-level-badge ${cls}">${level}</span>`;
+    div.onclick=()=>window.toggleSkill(div,name);
+    document.getElementById('skillList').appendChild(div);
+    window._loggedSkills[name]=level;
+    renderLog(); updateProgress();
+    input.value=''; input.focus();
+  };
+  document.getElementById('customSkill')?.addEventListener('keydown',e=>{if(e.key==='Enter')window.addCustomSkill();});
+
+  // ── COURSES ──
+  window.openCourse = id => window.open(`https://www.youtube.com/watch?v=${id}`,'_blank');
+  window.filterCourses = function(cat,btn) {
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.course-card').forEach(c=>c.classList.toggle('hidden',cat!=='all'&&!c.dataset.cat.includes(cat)));
+  };
+
+  // ── FAQ ──
+  window.toggleFaq = function(btn) {
+    const item=btn.parentElement;
+    const isOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+    if(!isOpen) item.classList.add('open');
+  };
+</script>
+</body>
+</html>
