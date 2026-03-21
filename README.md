@@ -13,7 +13,7 @@
 
 **A free platform for college students who are just starting their journey in tech.**
 
-🌐 **[Visit OGskills Live](https://kamayu2.github.io/ogskills/OGskills.html)**
+🌐 **[Visit OGskills Live](https://kamayu2.github.io/OGskills/)**
 
 </div>
 
