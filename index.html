@@ -3,7 +3,14 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="OGskills — Free platform for college students to discover tech skills, track progress and access 17+ free YouTube courses."/>
+  <meta property="og:title" content="OGskills — Discover Your Tech Journey"/>
+  <meta property="og:description" content="Track your skills, find free courses, own your journey in tech."/>
   <title>OGskills — Discover Your Tech Journey</title>
+
+  <!-- ✅ CHANGE 12: Favicon — shows 🎯 in browser tab -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>"/>
+
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Righteous&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
@@ -31,97 +38,58 @@
     html { scroll-behavior:smooth; }
     body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink); overflow-x:hidden; transition:var(--t); }
 
-    /* ════════════════════════════════
-       AUTH MODAL (popup)
-    ════════════════════════════════ */
-    .auth-overlay {
-      position:fixed; inset:0; z-index:500;
-      background:rgba(0,0,0,0.55);
-      backdrop-filter:blur(6px);
-      display:flex; align-items:center; justify-content:center;
-      padding:20px;
-      opacity:0; pointer-events:none;
-      transition:opacity 0.3s ease;
+    /* ✅ CHANGE 13: Loading spinner overlay */
+    .loading-screen {
+      position:fixed; inset:0; z-index:9999;
+      background:var(--bg);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      gap:16px; transition:opacity 0.4s ease;
     }
-    .auth-overlay.open {
-      opacity:1; pointer-events:all;
+    .loading-screen.hidden { opacity:0; pointer-events:none; }
+    .spinner {
+      width:44px; height:44px; border:3px solid var(--accent-light);
+      border-top-color:var(--accent); border-radius:50%;
+      animation:spin 0.8s linear infinite;
     }
-    .auth-modal {
-      background:var(--surface); border:1px solid var(--border);
-      border-radius:24px; padding:44px 40px; width:100%; max-width:440px;
-      box-shadow:0 32px 80px rgba(0,0,0,0.2);
-      position:relative; z-index:1;
-      transform:translateY(28px) scale(0.97);
-      transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),background 0.4s,border-color 0.4s;
-    }
-    .auth-overlay.open .auth-modal {
-      transform:translateY(0) scale(1);
-    }
-    .auth-modal-close {
-      position:absolute; top:16px; right:16px;
-      background:var(--surface2); border:none; border-radius:50%;
-      width:32px; height:32px; cursor:pointer;
-      font-size:1rem; color:var(--ink-muted);
-      display:flex; align-items:center; justify-content:center;
-      transition:all 0.2s;
-    }
-    .auth-modal-close:hover { background:var(--border); color:var(--ink); }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .loading-logo { font-family:'Righteous',cursive; font-size:1.6rem; color:var(--ink); }
+    .loading-logo span { color:var(--accent); }
+    .loading-sub { font-size:0.82rem; color:var(--ink-muted); }
 
+    /* AUTH MODAL */
+    .auth-overlay { position:fixed; inset:0; z-index:500; background:rgba(0,0,0,0.55); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity 0.3s ease; }
+    .auth-overlay.open { opacity:1; pointer-events:all; }
+    .auth-modal { background:var(--surface); border:1px solid var(--border); border-radius:24px; padding:44px 40px; width:100%; max-width:440px; box-shadow:0 32px 80px rgba(0,0,0,0.2); position:relative; z-index:1; transform:translateY(28px) scale(0.97); transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1),background 0.4s,border-color 0.4s; }
+    .auth-overlay.open .auth-modal { transform:translateY(0) scale(1); }
+    .auth-modal-close { position:absolute; top:16px; right:16px; background:var(--surface2); border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:1rem; color:var(--ink-muted); display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+    .auth-modal-close:hover { background:var(--border); color:var(--ink); }
     .auth-modal-logo { font-family:'Righteous',cursive; font-size:1.6rem; color:var(--ink); text-align:center; margin-bottom:6px; }
     .auth-modal-logo span { color:var(--accent); }
-    .auth-modal-reason {
-      text-align:center; font-size:0.88rem; color:var(--ink-muted);
-      margin-bottom:28px; line-height:1.5;
-    }
-    .auth-modal-reason strong { color:var(--ink); }
-
-    .google-btn {
-      width:100%; display:flex; align-items:center; justify-content:center; gap:12px;
-      background:var(--surface); border:1.5px solid var(--border);
-      border-radius:12px; padding:13px 20px; cursor:pointer;
-      font-family:'DM Sans',sans-serif; font-size:0.93rem; font-weight:600; color:var(--ink);
-      transition:all 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.06);
-    }
+    .auth-modal-reason { text-align:center; font-size:0.88rem; color:var(--ink-muted); margin-bottom:28px; line-height:1.5; }
+    .google-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:12px; background:var(--surface); border:1.5px solid var(--border); border-radius:12px; padding:13px 20px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:0.93rem; font-weight:600; color:var(--ink); transition:all 0.2s; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
     .google-btn:hover { border-color:var(--accent); box-shadow:0 4px 16px rgba(45,106,79,0.15); transform:translateY(-1px); }
     .google-btn img { width:20px; height:20px; }
-
     .auth-sep { display:flex; align-items:center; gap:12px; margin:18px 0; }
     .auth-sep::before,.auth-sep::after { content:''; flex:1; height:1px; background:var(--border); }
     .auth-sep span { font-size:0.75rem; color:var(--ink-muted); }
-
     .input-group { margin-bottom:14px; }
     .input-group label { display:block; font-size:0.8rem; font-weight:600; color:var(--ink); margin-bottom:5px; }
-    .input-group input {
-      width:100%; background:var(--surface2); border:1.5px solid var(--border);
-      border-radius:10px; padding:12px 14px; font-family:'DM Sans',sans-serif;
-      font-size:0.9rem; color:var(--ink); outline:none; transition:all 0.2s;
-    }
+    .input-group input { width:100%; background:var(--surface2); border:1.5px solid var(--border); border-radius:10px; padding:12px 14px; font-family:'DM Sans',sans-serif; font-size:0.9rem; color:var(--ink); outline:none; transition:all 0.2s; }
     .input-group input:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-light); background:var(--surface); }
     .input-group input::placeholder { color:var(--ink-muted); }
-
-    .auth-submit-btn {
-      width:100%; background:var(--accent); color:#fff; border:none;
-      border-radius:12px; padding:13px; font-family:'DM Sans',sans-serif;
-      font-size:0.93rem; font-weight:700; cursor:pointer; transition:all 0.2s;
-      box-shadow:0 4px 14px rgba(45,106,79,0.3); margin-top:2px;
-    }
+    .auth-submit-btn { width:100%; background:var(--accent); color:#fff; border:none; border-radius:12px; padding:13px; font-family:'DM Sans',sans-serif; font-size:0.93rem; font-weight:700; cursor:pointer; transition:all 0.2s; box-shadow:0 4px 14px rgba(45,106,79,0.3); margin-top:2px; }
     .auth-submit-btn:hover { filter:brightness(0.9); transform:translateY(-1px); }
-
     .auth-switch { text-align:center; margin-top:16px; font-size:0.83rem; color:var(--ink-muted); }
     .auth-switch a { color:var(--accent); font-weight:600; cursor:pointer; }
     .auth-switch a:hover { text-decoration:underline; }
-
     .auth-perks { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:24px; padding-top:20px; border-top:1px solid var(--border); }
     .auth-perk { text-align:center; }
     .auth-perk-icon { font-size:1.3rem; margin-bottom:5px; }
     .auth-perk p { font-size:0.72rem; color:var(--ink-muted); font-weight:500; line-height:1.3; }
-
     .error-msg { background:#fee2e2; color:#b91c1c; border-radius:8px; padding:9px 12px; font-size:0.82rem; margin-bottom:12px; display:none; }
     [data-theme="dark"] .error-msg { background:#2a0a0a; color:#f87171; }
 
-    /* ════════════════════════════════
-       THEME TOGGLE
-    ════════════════════════════════ */
+    /* THEME TOGGLE */
     .theme-toggle { position:relative; width:54px; height:28px; cursor:pointer; flex-shrink:0; }
     .theme-toggle input { opacity:0; width:0; height:0; position:absolute; }
     .toggle-track { position:absolute; inset:0; background:var(--border); border-radius:100px; transition:background 0.35s; border:1.5px solid var(--border); }
@@ -130,13 +98,10 @@
     .theme-toggle input:checked ~ .toggle-thumb { transform:translateX(26px); background:#ffd60a; }
     .toggle-icons { position:absolute; inset:0; display:flex; align-items:center; justify-content:space-between; padding:0 6px; pointer-events:none; font-size:10px; }
 
-    /* ════════════════════════════════
-       NAV
-    ════════════════════════════════ */
+    /* NAV */
     .announce-bar { background:var(--ink); color:var(--bg); display:flex; align-items:center; justify-content:center; gap:10px; padding:9px 48px 9px 20px; font-size:0.82rem; font-weight:500; position:relative; z-index:102; transition:var(--t); }
     .announce-bar a { color:var(--accent-mid); text-decoration:none; font-weight:700; }
     .announce-close { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; color:#888; font-size:1rem; cursor:pointer; }
-
     nav { position:sticky; top:0; z-index:100; background:var(--nav-bg); backdrop-filter:blur(18px); border-bottom:1px solid var(--border); padding:0 48px; height:68px; display:flex; align-items:center; justify-content:space-between; transition:var(--t); }
     .nav-logo { font-family:'Righteous',cursive; font-size:1.5rem; color:var(--ink); text-decoration:none; letter-spacing:0.02em; cursor:pointer; }
     .nav-logo span { color:var(--accent); }
@@ -148,8 +113,6 @@
     .nav-right { display:flex; align-items:center; gap:14px; }
     .nav-signin-btn { background:var(--accent); color:#fff; border:none; padding:10px 22px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:0.88rem; font-weight:600; cursor:pointer; transition:all 0.2s; box-shadow:0 3px 12px rgba(45,106,79,0.3); }
     .nav-signin-btn:hover { filter:brightness(0.88); transform:translateY(-1px); }
-
-    /* logged in user in nav */
     .nav-user { display:none; align-items:center; gap:10px; }
     .nav-user.visible { display:flex; }
     .nav-avatar { width:34px; height:34px; border-radius:50%; object-fit:cover; border:2px solid var(--accent); }
@@ -157,7 +120,6 @@
     .nav-username { font-size:0.85rem; font-weight:600; color:var(--ink); max-width:110px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .nav-logout { background:none; border:1px solid var(--border); color:var(--ink-muted); border-radius:100px; padding:7px 14px; font-size:0.78rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s; }
     .nav-logout:hover { border-color:#e74c3c; color:#e74c3c; }
-
     .hamburger { display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:8px; }
     .hamburger span { display:block; width:24px; height:2px; background:var(--ink); border-radius:2px; transition:all 0.3s; }
     .hamburger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg); }
@@ -171,9 +133,7 @@
     .mobile-theme-row { display:flex; align-items:center; justify-content:space-between; padding:14px 8px; border-bottom:1px solid var(--border); }
     .mobile-theme-row span { font-size:0.9rem; font-weight:500; color:var(--ink); }
 
-    /* ════════════════════════════════
-       MARQUEE
-    ════════════════════════════════ */
+    /* MARQUEE */
     .marquee-wrap { background:var(--accent); overflow:hidden; padding:11px 0; border-top:2px solid rgba(0,0,0,0.15); border-bottom:2px solid rgba(0,0,0,0.15); transition:background 0.4s; }
     .marquee-inner { display:flex; animation:marqueeScroll 32s linear infinite; white-space:nowrap; width:max-content; }
     .marquee-wrap:hover .marquee-inner { animation-play-state:paused; }
@@ -185,9 +145,7 @@
     .marquee-wrap.dark .marquee-item { color:var(--ink-muted); }
     .marquee-wrap.dark .marquee-item .dot { color:var(--accent); font-size:0.7rem; }
 
-    /* ════════════════════════════════
-       HERO
-    ════════════════════════════════ */
+    /* HERO */
     .hero { padding:72px 48px 80px; max-width:1140px; margin:0 auto; display:grid; grid-template-columns:1.1fr 0.9fr; gap:64px; align-items:center; }
     .hero-eyebrow { display:inline-flex; align-items:center; gap:8px; background:var(--accent-light); color:var(--accent); font-size:0.78rem; font-weight:700; padding:6px 16px; border-radius:100px; margin-bottom:22px; letter-spacing:0.06em; text-transform:uppercase; animation:fadeUp 0.6s ease both; transition:var(--t); }
     .hero-eyebrow::before { content:'●'; font-size:0.45rem; }
@@ -224,45 +182,39 @@
     .hbadge.gold { background:var(--surface2); color:var(--gold); }
     .hbadge.blue { background:var(--surface2); color:#38bdf8; }
 
-    /* ════════════════════════════════
-       STATS
-    ════════════════════════════════ */
+    /* STATS */
     .stats-strip { background:var(--ink); padding:40px 48px; display:flex; justify-content:center; gap:64px; flex-wrap:wrap; transition:var(--t); }
     .stat { text-align:center; }
     .stat-num { font-family:'Righteous',cursive; font-size:2.2rem; color:var(--bg); }
     .stat-num span { color:var(--accent-mid); }
     .stat-label { font-size:0.8rem; color:var(--ink-muted); margin-top:4px; }
 
-    /* Guide */
+    /* GUIDE */
     .guide-wrap { background:var(--surface); border-bottom:1px solid var(--border); padding:24px 48px; transition:var(--t); }
     .guide-strip { background:var(--accent-light); border:1px solid var(--border); border-radius:var(--radius); padding:24px 30px; max-width:1140px; margin:0 auto; display:flex; gap:16px; align-items:flex-start; transition:var(--t); }
     .guide-strip h3 { font-family:'Righteous',cursive; font-size:0.95rem; margin-bottom:6px; color:var(--accent); }
     .guide-strip p { font-size:0.88rem; color:var(--ink); line-height:1.7; }
 
-    /* ════════════════════════════════
-       PROFILE STRIP (logged in)
-    ════════════════════════════════ */
+    /* PROFILE STRIP */
     .profile-strip { display:none; background:linear-gradient(135deg,var(--accent),#1d4d39); padding:28px 48px; }
     [data-theme="dark"] .profile-strip { background:linear-gradient(135deg,#1a4a35,#0d2a1f); }
     .profile-strip.visible { display:block; }
-    .profile-strip-inner { max-width:1140px; margin:0 auto; display:flex; align-items:center; gap:22px; }
+    .profile-strip-inner { max-width:1140px; margin:0 auto; display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
     .profile-avatar-lg { width:68px; height:68px; border-radius:50%; border:3px solid rgba(255,255,255,0.35); object-fit:cover; flex-shrink:0; }
     .profile-avatar-ph { width:68px; height:68px; border-radius:50%; background:rgba(255,255,255,0.2); border:3px solid rgba(255,255,255,0.35); display:flex; align-items:center; justify-content:center; font-family:'Righteous',cursive; font-size:1.8rem; color:#fff; flex-shrink:0; }
     .profile-info h2 { font-family:'Righteous',cursive; font-size:1.4rem; color:#fff; margin-bottom:3px; }
     .profile-info p { font-size:0.82rem; color:rgba(255,255,255,0.7); }
-    .profile-stats { display:flex; gap:28px; margin-top:12px; }
+    .profile-stats { display:flex; gap:28px; margin-top:12px; flex-wrap:wrap; }
     .pstat-num { font-family:'Righteous',cursive; font-size:1.3rem; color:#fff; }
     .pstat-label { font-size:0.7rem; color:rgba(255,255,255,0.6); margin-top:1px; }
 
-    /* ════════════════════════════════
-       SECTION
-    ════════════════════════════════ */
+    /* SECTION */
     .section { max-width:1140px; margin:0 auto; padding:88px 48px; }
     .section-label { font-family:'Righteous',cursive; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
     .section-title { font-family:'Righteous',cursive; font-size:clamp(1.9rem,3vw,2.6rem); line-height:1.18; margin-bottom:14px; color:var(--ink); }
     .section-sub { color:var(--ink-muted); font-size:1rem; line-height:1.8; max-width:540px; margin-bottom:52px; }
 
-    /* Tags */
+    /* TAGS */
     .tag { display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:600; padding:5px 13px; border-radius:100px; letter-spacing:0.03em; transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1); cursor:default; border:1px solid transparent; animation:tagPop 0.5s ease both; }
     .tag:hover { transform:translateY(-3px) scale(1.06); box-shadow:0 6px 18px rgba(0,0,0,0.12); }
     @keyframes tagPop { from{opacity:0;transform:scale(0.7)} to{opacity:1;transform:scale(1)} }
@@ -276,7 +228,7 @@
     .tag-purple { background:#f3e8ff; color:#7c3aed; }
     [data-theme="dark"] .tag-purple { background:#1a0a2e; color:#c084fc; }
 
-    /* Features */
+    /* FEATURES */
     .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
     .feature-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:32px 28px; transition:transform 0.25s,box-shadow 0.25s,background 0.4s,border-color 0.4s; position:relative; overflow:hidden; }
     .feature-card::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent-mid)); transform:scaleX(0); transition:transform 0.3s; transform-origin:left; }
@@ -286,9 +238,7 @@
     .feature-card h3 { font-family:'Righteous',cursive; font-size:1.1rem; margin-bottom:10px; color:var(--ink); }
     .feature-card p { font-size:0.9rem; color:var(--ink-muted); line-height:1.7; }
 
-    /* ════════════════════════════════
-       TRACKER
-    ════════════════════════════════ */
+    /* TRACKER */
     #tracker { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); transition:var(--t); }
     .tracker-inner { max-width:1140px; margin:0 auto; padding:88px 48px; }
     .tracker-grid { display:grid; grid-template-columns:1fr 1.4fr; gap:52px; align-items:start; }
@@ -298,9 +248,7 @@
     [data-theme="dark"] .domain-header { background:linear-gradient(135deg,#1a4a35,#0d2a1f); }
     .domain-header h3 { font-family:'Righteous',cursive; font-size:1.1rem; }
     .domain-body { padding:18px; }
-
-    /* Skill items — locked look for guests */
-    .skill-item { display:flex; align-items:center; justify-content:space-between; padding:13px 16px; background:var(--surface); border-radius:10px; margin-bottom:9px; border:1.5px solid var(--border); cursor:pointer; transition:all 0.2s; user-select:none; min-height:54px; position:relative; }
+    .skill-item { display:flex; align-items:center; justify-content:space-between; padding:13px 16px; background:var(--surface); border-radius:10px; margin-bottom:9px; border:1.5px solid var(--border); cursor:pointer; transition:all 0.2s; user-select:none; min-height:54px; }
     .skill-item:hover { border-color:var(--accent); transform:translateX(4px); box-shadow:0 2px 10px rgba(45,106,79,0.15); }
     .skill-item.selected { border-color:var(--accent); background:var(--accent-light); }
     .skill-item-left { display:flex; align-items:center; gap:12px; }
@@ -315,8 +263,6 @@
     [data-theme="dark"] .level-intermediate { background:#0c1a2e; color:#38bdf8; }
     .level-advanced { background:#d1e7dd; color:#0f5132; }
     [data-theme="dark"] .level-advanced { background:var(--accent-light); color:var(--accent); }
-
-    /* Tracker right panel */
     .tracker-panel h2 { font-family:'Righteous',cursive; font-size:1.5rem; margin-bottom:8px; color:var(--ink); }
     .tracker-panel>p { font-size:0.9rem; color:var(--ink-muted); margin-bottom:22px; }
     .progress-overview { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:26px; margin-bottom:22px; transition:var(--t); }
@@ -342,18 +288,29 @@
     .log-remove { background:none; border:none; cursor:pointer; color:var(--border); font-size:1rem; transition:color 0.2s; padding:4px 8px; }
     .log-remove:hover { color:#e74c3c; }
 
-    /* Save btn */
-    .save-skills-btn { margin-top:14px; width:100%; background:var(--accent); color:#fff; border:none; border-radius:10px; padding:13px; font-family:'DM Sans',sans-serif; font-size:0.9rem; font-weight:700; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 3px 12px rgba(45,106,79,0.25); }
+    /* ✅ CHANGE 7: Save button with saved state */
+    .save-skills-btn { margin-top:14px; width:100%; background:var(--accent); color:#fff; border:none; border-radius:10px; padding:13px; font-family:'DM Sans',sans-serif; font-size:0.9rem; font-weight:700; cursor:pointer; transition:all 0.2s; display:none; align-items:center; justify-content:center; gap:8px; box-shadow:0 3px 12px rgba(45,106,79,0.25); }
     .save-skills-btn:hover { filter:brightness(0.88); transform:translateY(-1px); }
     .save-skills-btn.saving { opacity:0.6; pointer-events:none; }
+    .save-skills-btn.saved { background:#16a34a; }
 
-    /* Sign-in nudge inside tracker for guests */
-    .signin-nudge { background:var(--accent-light); border:1.5px dashed var(--accent-mid); border-radius:12px; padding:18px 20px; display:flex; align-items:center; gap:14px; margin-top:14px; }
+    /* ✅ CHANGE 9: Search bar for courses */
+    .courses-search-wrap { margin-bottom:24px; }
+    .courses-search { width:100%; max-width:360px; background:var(--surface); border:1.5px solid var(--border); border-radius:100px; padding:11px 20px; font-family:'DM Sans',sans-serif; font-size:0.9rem; color:var(--ink); outline:none; transition:all 0.2s; }
+    .courses-search:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-light); }
+    .courses-search::placeholder { color:var(--ink-muted); }
+
+    /* SIGN-IN NUDGE */
+    .signin-nudge { background:var(--accent-light); border:1.5px dashed var(--accent-mid); border-radius:12px; padding:18px 20px; display:flex; align-items:center; gap:14px; margin-top:14px; transition:var(--t); }
     .signin-nudge p { font-size:0.88rem; color:var(--ink); line-height:1.55; }
     .signin-nudge-btn { background:var(--accent); color:#fff; border:none; padding:10px 20px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:0.82rem; font-weight:700; cursor:pointer; white-space:nowrap; transition:all 0.2s; flex-shrink:0; }
     .signin-nudge-btn:hover { filter:brightness(0.88); transform:translateY(-1px); }
 
-    /* Journey */
+    /* ✅ CHANGE 10: Share progress button */
+    .share-btn { margin-top:10px; width:100%; background:var(--surface2); border:1.5px solid var(--border); color:var(--ink); border-radius:10px; padding:11px; font-family:'DM Sans',sans-serif; font-size:0.86rem; font-weight:600; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .share-btn:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-light); }
+
+    /* JOURNEY */
     .journey-steps { display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative; margin-top:52px; }
     .journey-steps::before { content:''; position:absolute; top:28px; left:12.5%; right:12.5%; height:2px; background:linear-gradient(90deg,var(--accent-light),var(--accent-mid),var(--accent-light)); z-index:0; }
     .step { display:flex; flex-direction:column; align-items:center; text-align:center; position:relative; z-index:1; padding:0 10px; }
@@ -362,11 +319,9 @@
     .step h4 { font-family:'Righteous',cursive; font-size:0.95rem; margin-bottom:8px; color:var(--ink); }
     .step p { font-size:0.84rem; color:var(--ink-muted); line-height:1.65; }
 
-    /* ════════════════════════════════
-       COURSES
-    ════════════════════════════════ */
+    /* COURSES */
     #courses { background:var(--bg); transition:background 0.4s; }
-    .filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:38px; }
+    .filter-bar { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px; }
     .filter-btn { background:var(--surface); border:1.5px solid var(--border); color:var(--ink-muted); padding:9px 20px; border-radius:100px; font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:500; cursor:pointer; transition:all 0.25s; white-space:nowrap; }
     .filter-btn:hover { border-color:var(--accent); color:var(--accent); transform:translateY(-2px); }
     .filter-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; box-shadow:0 3px 12px rgba(45,106,79,0.3); }
@@ -374,8 +329,9 @@
     .course-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; overflow:hidden; transition:transform 0.25s,box-shadow 0.25s,background 0.4s,border-color 0.4s; cursor:pointer; }
     .course-card:hover { transform:translateY(-5px); box-shadow:var(--card-hover); }
     .course-card.hidden { display:none; }
-    .course-thumb { position:relative; width:100%; padding-top:56.25%; background:#111; overflow:hidden; }
-    .course-thumb img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; transition:transform 0.35s; }
+    /* ✅ CHANGE 6: Fallback background for broken thumbnails */
+    .course-thumb { position:relative; width:100%; padding-top:56.25%; background:var(--surface2); overflow:hidden; }
+    .course-thumb img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; transition:transform 0.35s; background:var(--surface2); }
     .course-card:hover .course-thumb img { transform:scale(1.07); }
     .play-overlay { position:absolute; inset:0; background:rgba(0,0,0,0); display:flex; align-items:center; justify-content:center; transition:background 0.25s; }
     .course-card:hover .play-overlay { background:rgba(0,0,0,0.3); }
@@ -392,8 +348,10 @@
     .course-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .course-level { font-size:0.65rem; font-weight:700; padding:2px 8px; border-radius:100px; }
     .course-views { font-size:0.68rem; color:var(--ink-muted); }
+    .no-results { text-align:center; padding:48px; color:var(--ink-muted); font-size:0.95rem; display:none; }
+    .no-results.visible { display:block; }
 
-    /* Testimonials */
+    /* TESTIMONIALS */
     #testimonials { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); transition:var(--t); }
     .testimonials-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
     .tcard { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:28px 26px; transition:transform 0.2s,box-shadow 0.2s,background 0.4s,border-color 0.4s; }
@@ -418,13 +376,13 @@
     .faq-item.open .faq-a { max-height:220px; }
     .faq-a-inner { padding:0 22px 18px; font-size:0.9rem; color:var(--ink-muted); line-height:1.75; }
 
-    /* Tag showcase */
+    /* TAG SHOWCASE */
     .tag-showcase { background:var(--surface2); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:48px; transition:var(--t); }
     .tag-showcase-inner { max-width:1140px; margin:0 auto; }
     .tag-showcase h3 { font-family:'Righteous',cursive; font-size:1rem; color:var(--ink-muted); margin-bottom:24px; letter-spacing:0.06em; text-transform:uppercase; }
     .tag-cloud { display:flex; flex-wrap:wrap; gap:10px; }
 
-    /* Credits */
+    /* CREDITS */
     #credits { background:var(--ink); padding:100px 48px; transition:var(--t); }
     .credits-inner { max-width:700px; margin:0 auto; text-align:center; }
     .credits-built { font-family:'Righteous',cursive; font-size:0.75rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent-mid); margin-bottom:24px; }
@@ -445,7 +403,7 @@
     .social-btn.insta { background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045); color:#fff; }
     .social-btn.github { background:#24292e; color:#fff; border:1px solid rgba(255,255,255,0.15); }
 
-    /* Footer */
+    /* FOOTER */
     footer { background:var(--ink); border-top:1px solid var(--border); color:var(--ink-muted); padding:52px 48px 36px; transition:var(--t); }
     .footer-inner { max-width:1140px; margin:0 auto; }
     .footer-top { display:grid; grid-template-columns:1.5fr 1fr 1fr; gap:48px; margin-bottom:48px; }
@@ -461,13 +419,13 @@
     .footer-copy span { color:var(--accent-mid); }
     .footer-love a { color:var(--accent-mid); text-decoration:none; font-size:0.8rem; }
 
-    /* Back to top */
+    /* BACK TO TOP */
     #backToTop { position:fixed; bottom:30px; right:30px; z-index:90; width:50px; height:50px; border-radius:50%; background:var(--accent); color:#fff; border:none; cursor:pointer; font-size:1.1rem; box-shadow:0 4px 20px rgba(45,106,79,0.45); display:none; align-items:center; justify-content:center; transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); font-family:'Righteous',cursive; }
     #backToTop:hover { transform:translateY(-4px) scale(1.08); }
     #backToTop.visible { display:flex; animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
     @keyframes popIn { from{opacity:0;transform:scale(0.5)} to{opacity:1;transform:scale(1)} }
 
-    /* Reveal */
+    /* REVEAL */
     .reveal { opacity:0; transform:translateY(30px); transition:opacity 0.65s ease,transform 0.65s ease; }
     .reveal.visible { opacity:1; transform:translateY(0); }
     .reveal-left { opacity:0; transform:translateX(-30px); transition:opacity 0.65s,transform 0.65s; }
@@ -475,13 +433,13 @@
     .reveal-right { opacity:0; transform:translateX(30px); transition:opacity 0.65s,transform 0.65s; }
     .reveal-right.visible { opacity:1; transform:translateX(0); }
 
-    /* Toast */
+    /* TOAST */
     .toast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--ink); color:var(--bg); padding:12px 24px; border-radius:100px; font-size:0.88rem; font-weight:600; z-index:999; transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1); white-space:nowrap; box-shadow:0 8px 24px rgba(0,0,0,0.2); }
     .toast.show { transform:translateX(-50%) translateY(0); }
 
     @keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
 
-    /* Responsive */
+    /* RESPONSIVE */
     @media(max-width:960px){
       nav{padding:0 24px}
       .nav-center,.nav-signin-btn{display:none}
@@ -515,27 +473,31 @@
       .footer-top{grid-template-columns:1fr}
       .footer-bottom{flex-direction:column;text-align:center}
       .auth-modal{padding:32px 24px}
-      .auth-perks{grid-template-columns:repeat(3,1fr)}
+      .signin-nudge{flex-direction:column;text-align:center}
+      .courses-search{max-width:100%}
     }
   </style>
 </head>
 <body>
 
-<!-- ═══════════ AUTH MODAL (popup) ═══════════ -->
+<!-- ✅ CHANGE 13: Loading spinner -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-logo">OG<span>skills</span></div>
+  <div class="spinner"></div>
+  <div class="loading-sub">Loading your journey...</div>
+</div>
+
+<!-- AUTH MODAL -->
 <div class="auth-overlay" id="authOverlay" onclick="overlayClick(event)">
   <div class="auth-modal">
     <button class="auth-modal-close" onclick="closeAuthModal()">✕</button>
     <div class="auth-modal-logo">OG<span>skills</span></div>
     <p class="auth-modal-reason" id="authModalReason">Sign in to start tracking your skills and save your progress.</p>
-
     <button class="google-btn" onclick="signInWithGoogle()">
       <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"/>
       Continue with Google
     </button>
-
     <div class="auth-sep"><span>or use email</span></div>
-
-    <!-- Login form -->
     <div id="authLoginForm">
       <div id="loginError" class="error-msg"></div>
       <div class="input-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com"/></div>
@@ -543,8 +505,6 @@
       <button class="auth-submit-btn" onclick="signInWithEmail()">Sign In →</button>
       <p class="auth-switch">No account? <a onclick="showSignup()">Sign up free</a></p>
     </div>
-
-    <!-- Signup form -->
     <div id="authSignupForm" style="display:none">
       <div id="signupError" class="error-msg"></div>
       <div class="input-group"><label>Your Name</label><input type="text" id="signupName" placeholder="Ayush Kamble"/></div>
@@ -554,7 +514,6 @@
       <button class="auth-submit-btn" onclick="signUpWithEmail()">Create Account →</button>
       <p class="auth-switch">Already have one? <a onclick="showLogin()">Sign in</a></p>
     </div>
-
     <div class="auth-perks">
       <div class="auth-perk"><div class="auth-perk-icon">☁️</div><p>Save your skills</p></div>
       <div class="auth-perk"><div class="auth-perk-icon">📈</div><p>Track progress</p></div>
@@ -566,7 +525,7 @@
 <!-- ANNOUNCE BAR -->
 <div class="announce-bar" id="announceBar">
   <span>🎉 OGskills is free forever — </span>
-  <a href="#courses">Explore 17+ free courses →</a>
+  <a onclick="goTo('courses')">Explore 17+ free courses →</a>
   <button class="announce-close" onclick="document.getElementById('announceBar').style.display='none'">✕</button>
 </div>
 
@@ -589,9 +548,7 @@
       <div class="toggle-thumb" id="toggleThumb">☀️</div>
       <div class="toggle-icons"><span>☀️</span><span>🌙</span></div>
     </label>
-    <!-- Guest: sign in button -->
     <button class="nav-signin-btn" id="navSignInBtn" onclick="openAuthModal('Sign in to track your skills and save progress.')">Sign In</button>
-    <!-- Logged in: user info -->
     <div class="nav-user" id="navUser">
       <div class="nav-avatar-ph" id="navAvatarPh">?</div>
       <span class="nav-username" id="navUsername">User</span>
@@ -622,7 +579,7 @@
   <button class="mobile-menu-cta" id="mobileAuthBtn" onclick="closeMenu();openAuthModal('Sign in to track your skills.')">Sign In / Sign Up</button>
 </div>
 
-<!-- PROFILE STRIP (only visible when logged in) -->
+<!-- PROFILE STRIP -->
 <div class="profile-strip" id="profileStrip">
   <div class="profile-strip-inner">
     <div class="profile-avatar-ph" id="profileAvatarPh">?</div>
@@ -631,6 +588,7 @@
       <p id="profileEmail">—</p>
       <div class="profile-stats">
         <div><div class="pstat-num" id="profileSkillCount">0</div><div class="pstat-label">Skills Tracked</div></div>
+        <div><div class="pstat-num" id="profileStreak">0🔥</div><div class="pstat-label">Day Streak</div></div>
         <div><div class="pstat-num" id="profileJoined">—</div><div class="pstat-label">Member Since</div></div>
       </div>
     </div>
@@ -645,7 +603,7 @@
     <p class="hero-sub">OGskills helps you discover your tech interests, track what you're learning, and access free courses — all in one place. Built for students on Day One.</p>
     <div class="beginner-tip">
       <span style="font-size:1.2rem;flex-shrink:0">💡</span>
-      <p><strong>Just starting out?</strong> Browse freely! Sign in only when you're ready to track and save your skills.</p>
+      <p><strong>Just starting out?</strong> Browse freely! Sign in only when you're ready to save your skills to the cloud.</p>
     </div>
     <div class="hero-actions">
       <button class="btn-primary" onclick="goTo('tracker')">📊 Explore Tracker</button>
@@ -686,7 +644,7 @@
     <div style="font-size:2rem;flex-shrink:0">🧭</div>
     <div>
       <h3>New to tech? Use OGskills in 3 simple steps:</h3>
-      <p><strong>Step 1 —</strong> Browse the <strong>Skill Tracker</strong> below — no sign-in needed to look around. <strong>Step 2 —</strong> When you're ready to track your own skills, simply sign in (it's free). <strong>Step 3 —</strong> Watch free courses on YouTube, update your tracker, and watch your skills grow! 🌱</p>
+      <p><strong>Step 1 —</strong> Browse the <strong>Skill Tracker</strong> below — no sign-in needed to look around. <strong>Step 2 —</strong> When you're ready to save your progress, simply sign in (it's free). <strong>Step 3 —</strong> Watch free courses on YouTube and update your tracker as you learn! 🌱</p>
     </div>
   </div>
 </div>
@@ -697,12 +655,12 @@
   <h2 class="section-title reveal">Built for the curious,<br>driven student.</h2>
   <p class="section-sub reveal">Browse everything freely. Sign in only when you want to save your progress.</p>
   <div class="features-grid">
-    <div class="feature-card reveal"><div class="feature-icon">📊</div><h3>Progress Tracker</h3><p>Log your skills, set proficiency levels, and watch your growth with visual progress bars.</p></div>
-    <div class="feature-card reveal" style="transition-delay:0.1s"><div class="feature-icon">🧭</div><h3>Interest Mapping</h3><p>Identify patterns in what you enjoy and get clarity on which tech domains excite you.</p></div>
+    <div class="feature-card reveal"><div class="feature-icon">📊</div><h3>Progress Tracker</h3><p>Log your skills, set proficiency levels, and watch your growth with beautiful visual progress bars.</p></div>
+    <div class="feature-card reveal" style="transition-delay:0.1s"><div class="feature-icon">🧭</div><h3>Interest Mapping</h3><p>Identify patterns in what you enjoy and get clarity on which tech domains genuinely excite you.</p></div>
     <div class="feature-card reveal" style="transition-delay:0.2s"><div class="feature-icon">🎯</div><h3>Goal Setting</h3><p>Set milestones for your journey. Stay motivated with streak tracking and badges.</p></div>
     <div class="feature-card reveal" style="transition-delay:0.1s"><div class="feature-icon">🗺️</div><h3>Career Alignment</h3><p>See how your skills align with paths like Full Stack Dev, Data Science, or DevOps.</p></div>
     <div class="feature-card reveal" style="transition-delay:0.2s"><div class="feature-icon">🎬</div><h3>Free YouTube Courses</h3><p>17+ hand-picked free courses — no money, no sign-up needed to watch them.</p></div>
-    <div class="feature-card reveal" style="transition-delay:0.3s"><div class="feature-icon">☁️</div><h3>Cloud Save</h3><p>Sign in once and your skills save automatically to Firebase — access from any device.</p></div>
+    <div class="feature-card reveal" style="transition-delay:0.3s"><div class="feature-icon">☁️</div><h3>Cloud Save</h3><p>Sign in once and your skills save automatically to Firebase — access from any device, anytime.</p></div>
   </div>
 </section>
 
@@ -720,20 +678,28 @@
   <div class="tracker-inner">
     <div class="section-label">Interactive Tracker</div>
     <h2 class="section-title reveal-left">Try the Skill Tracker</h2>
-    <p class="section-sub reveal-left">Tap any skill to mark it. Sign in to save your progress to the cloud!</p>
+    <p class="section-sub reveal-left">Tap any skill you've tried or heard of. Sign in to save your progress to the cloud!</p>
     <div class="tracker-grid">
       <div class="reveal-left">
-        <div class="tracker-help"><span>👆</span><span><strong>How to use:</strong> Tap a skill to mark it green. Sign in to save your skills permanently.</span></div>
+        <div class="tracker-help"><span>👆</span><span><strong>How to use:</strong> Tap a skill to mark it green. Sign in to save skills permanently to your account.</span></div>
         <div class="domain-card">
           <div class="domain-header"><span>💻</span><h3>Tech & Coding Skills</h3></div>
           <div class="domain-body" id="skillList">
+            <!-- ✅ CHANGE 14: More skills added -->
             <div class="skill-item" onclick="handleSkillClick(this,'HTML & CSS')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">HTML & CSS</div><div class="skill-sublabel">The language of web pages</div></div></div><span class="skill-level-badge level-beginner">Beginner</span></div>
             <div class="skill-item" onclick="handleSkillClick(this,'JavaScript')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">JavaScript</div><div class="skill-sublabel">Makes websites interactive</div></div></div><span class="skill-level-badge level-intermediate">Intermediate</span></div>
             <div class="skill-item" onclick="handleSkillClick(this,'Python')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Python</div><div class="skill-sublabel">Great first programming language</div></div></div><span class="skill-level-badge level-intermediate">Intermediate</span></div>
             <div class="skill-item" onclick="handleSkillClick(this,'Data Structures & Algorithms')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">DSA</div><div class="skill-sublabel">Problem-solving with code</div></div></div><span class="skill-level-badge level-beginner">Beginner</span></div>
-            <div class="skill-item" onclick="handleSkillClick(this,'Git & Version Control')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Git & Version Control</div><div class="skill-sublabel">Track and save your code</div></div></div><span class="skill-level-badge level-advanced">Advanced</span></div>
+            <div class="skill-item" onclick="handleSkillClick(this,'Git & Version Control')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Git & Version Control</div><div class="skill-sublabel">Track and save your code</div></div></div><span class="skill-level-badge level-beginner">Beginner</span></div>
             <div class="skill-item" onclick="handleSkillClick(this,'React / Frontend Frameworks')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">React / Frameworks</div><div class="skill-sublabel">Build modern websites faster</div></div></div><span class="skill-level-badge level-intermediate">Intermediate</span></div>
             <div class="skill-item" onclick="handleSkillClick(this,'Databases & SQL')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Databases & SQL</div><div class="skill-sublabel">Store and manage data</div></div></div><span class="skill-level-badge level-beginner">Beginner</span></div>
+            <div class="skill-item" onclick="handleSkillClick(this,'Node.js / Backend')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Node.js / Backend</div><div class="skill-sublabel">Run JavaScript on the server</div></div></div><span class="skill-level-badge level-intermediate">Intermediate</span></div>
+            <div class="skill-item" onclick="handleSkillClick(this,'C Programming')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">C Programming</div><div class="skill-sublabel">Foundation of all languages</div></div></div><span class="skill-level-badge level-beginner">Beginner</span></div>
+            <div class="skill-item" onclick="handleSkillClick(this,'Java')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Java</div><div class="skill-sublabel">Object-oriented programming</div></div></div><span class="skill-level-badge level-intermediate">Intermediate</span></div>
+            <div class="skill-item" onclick="handleSkillClick(this,'Linux / Command Line')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Linux / Command Line</div><div class="skill-sublabel">Control your computer with text</div></div></div><span class="skill-level-badge level-beginner">Beginner</span></div>
+            <div class="skill-item" onclick="handleSkillClick(this,'Figma / UI Design')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Figma / UI Design</div><div class="skill-sublabel">Design beautiful interfaces</div></div></div><span class="skill-level-badge level-beginner">Beginner</span></div>
+            <div class="skill-item" onclick="handleSkillClick(this,'Machine Learning')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Machine Learning</div><div class="skill-sublabel">Teach computers to learn</div></div></div><span class="skill-level-badge level-advanced">Advanced</span></div>
+            <div class="skill-item" onclick="handleSkillClick(this,'Cloud Computing')"><div class="skill-item-left"><div class="skill-dot"></div><div><div class="skill-name">Cloud Computing</div><div class="skill-sublabel">AWS, Azure, GCP basics</div></div></div><span class="skill-level-badge level-intermediate">Intermediate</span></div>
           </div>
         </div>
       </div>
@@ -743,30 +709,30 @@
           <p>Skills you mark appear here. Sign in to save them permanently!</p>
           <div class="progress-overview">
             <h4>📈 Your Progress</h4>
-            <div class="prog-row"><div class="prog-label"><span>Skills Checked</span><span id="checkedCount">0 / 7</span></div><div class="prog-bar"><div class="prog-fill" id="progressFill" style="width:0%"></div></div></div>
+            <div class="prog-row"><div class="prog-label"><span>Skills Checked</span><span id="checkedCount">0 / 14</span></div><div class="prog-bar"><div class="prog-fill" id="progressFill" style="width:0%"></div></div></div>
             <div class="prog-row"><div class="prog-label"><span>🌱 Beginner</span><span id="beginnerCount">0</span></div><div class="prog-bar"><div class="prog-fill" id="beginnerFill" style="width:0%;background:#e9c46a"></div></div></div>
             <div class="prog-row"><div class="prog-label"><span>🔧 Intermediate</span><span id="intermediateCount">0</span></div><div class="prog-bar"><div class="prog-fill" id="intermediateFill" style="width:0%;background:#74c69d"></div></div></div>
             <div class="prog-row"><div class="prog-label"><span>⚡ Advanced</span><span id="advancedCount">0</span></div><div class="prog-bar"><div class="prog-fill" id="advancedFill" style="width:0%;background:#2d6a4f"></div></div></div>
           </div>
           <p style="font-size:0.82rem;color:var(--ink-muted);margin-bottom:8px;">➕ <strong>Add a skill not listed above:</strong></p>
           <div class="add-skill-form">
-            <input type="text" id="customSkill" placeholder="e.g. Java, Flutter, Linux..."/>
+            <input type="text" id="customSkill" placeholder="e.g. Flutter, TypeScript..."/>
             <select id="customLevel"><option value="Beginner">🌱 Beginner</option><option value="Intermediate">🔧 Intermediate</option><option value="Advanced">⚡ Advanced</option></select>
             <button onclick="addCustomSkill()">Add</button>
           </div>
           <div class="skills-log" id="skillsLog"><p style="color:var(--ink-muted);font-size:0.85rem;text-align:center;padding:28px 0;">No skills logged yet.<br>👆 Tap a skill to start!</p></div>
 
-          <!-- Shown to guests -->
+          <!-- Guest nudge -->
           <div class="signin-nudge" id="guestNudge">
             <span style="font-size:1.4rem">☁️</span>
             <p><strong>Sign in free</strong> to save your skills to your account and access them from any device!</p>
             <button class="signin-nudge-btn" onclick="openAuthModal('Sign in to save your tracked skills to the cloud.')">Sign In</button>
           </div>
 
-          <!-- Shown to logged-in users -->
-          <button class="save-skills-btn" id="saveSkillsBtn" style="display:none" onclick="saveSkillsToFirebase()">
-            ☁️ Save Skills to My Account
-          </button>
+          <!-- Logged in actions -->
+          <button class="save-skills-btn" id="saveSkillsBtn" onclick="saveSkillsToFirebase()">☁️ Save Skills to My Account</button>
+          <!-- ✅ CHANGE 10: Share progress button -->
+          <button class="share-btn" id="shareBtn" style="display:none" onclick="shareProgress()">📤 Share My Progress</button>
         </div>
       </div>
     </div>
@@ -791,6 +757,12 @@
   <div class="section-label">Free YouTube Resources</div>
   <h2 class="section-title">Learn from the best,<br>completely free.</h2>
   <p class="section-sub">Click any thumbnail to open on YouTube. No sign-in needed to watch!</p>
+
+  <!-- ✅ CHANGE 9: Search bar -->
+  <div class="courses-search-wrap">
+    <input class="courses-search" type="text" id="courseSearch" placeholder="🔍 Search courses... e.g. Python, React, Git" oninput="searchCourses(this.value)"/>
+  </div>
+
   <div class="filter-bar">
     <button class="filter-btn active" onclick="filterCourses('all',this)">All</button>
     <button class="filter-btn" onclick="filterCourses('webdev',this)">🌐 Web Dev</button>
@@ -802,25 +774,27 @@
     <button class="filter-btn" onclick="filterCourses('linux',this)">🐧 Linux</button>
     <button class="filter-btn" onclick="filterCourses('ai',this)">🤖 AI/ML</button>
   </div>
+
   <div class="courses-grid" id="coursesGrid">
-    <div class="course-card" data-cat="webdev" onclick="openCourse('mU6anWqZJcc')"><div class="course-thumb"><img src="https://img.youtube.com/vi/mU6anWqZJcc/mqdefault.jpg" loading="lazy" alt="HTML"/><div class="course-category-tag">Web Dev</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">2:02:37</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">HTML Full Course — Build a Website Tutorial</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">8.1M views</span></div></div></div>
-    <div class="course-card" data-cat="webdev" onclick="openCourse('1Rs2ND1ryYc')"><div class="course-thumb"><img src="https://img.youtube.com/vi/1Rs2ND1ryYc/mqdefault.jpg" loading="lazy" alt="CSS"/><div class="course-category-tag">Web Dev</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">6:18:37</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">CSS Tutorial — Zero to Hero</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">3.2M views</span></div></div></div>
-    <div class="course-card" data-cat="webdev" onclick="openCourse('PkZNo7MFNFg')"><div class="course-thumb"><img src="https://img.youtube.com/vi/PkZNo7MFNFg/mqdefault.jpg" loading="lazy" alt="JS"/><div class="course-category-tag">Web Dev</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">3:26:42</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Learn JavaScript — Full Course for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">10M views</span></div></div></div>
-    <div class="course-card" data-cat="python" onclick="openCourse('rfscVS0vtbw')"><div class="course-thumb"><img src="https://img.youtube.com/vi/rfscVS0vtbw/mqdefault.jpg" loading="lazy" alt="Python"/><div class="course-category-tag">Python</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">4:26:52</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Learn Python — Full Course for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">12M views</span></div></div></div>
-    <div class="course-card" data-cat="python" onclick="openCourse('LHBE3CIBFe8')"><div class="course-thumb"><img src="https://img.youtube.com/vi/LHBE3CIBFe8/mqdefault.jpg" loading="lazy" alt="Python"/><div class="course-category-tag">Python</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">13:37:30</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Python for Everybody — Full University Course</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">6.4M views</span></div></div></div>
-    <div class="course-card" data-cat="python ai" onclick="openCourse('i_LwzRVP7bg')"><div class="course-thumb"><img src="https://img.youtube.com/vi/i_LwzRVP7bg/mqdefault.jpg" loading="lazy" alt="ML"/><div class="course-category-tag">Python</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">10:52:27</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Machine Learning with Python — Full Course</div><div class="course-meta"><span class="course-level level-intermediate">Intermediate</span><span class="course-views">3.8M views</span></div></div></div>
-    <div class="course-card" data-cat="dsa" onclick="openCourse('pkYVOmU3MgA')"><div class="course-thumb"><img src="https://img.youtube.com/vi/pkYVOmU3MgA/mqdefault.jpg" loading="lazy" alt="DSA"/><div class="course-category-tag">DSA</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">9:54:38</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Data Structures & Algorithms in Python</div><div class="course-meta"><span class="course-level level-intermediate">Intermediate</span><span class="course-views">3.4M views</span></div></div></div>
-    <div class="course-card" data-cat="dsa" onclick="openCourse('8hly31xKli0')"><div class="course-thumb"><img src="https://img.youtube.com/vi/8hly31xKli0/mqdefault.jpg" loading="lazy" alt="DSA"/><div class="course-category-tag">DSA</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">5:22:04</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Algorithms and Data Structures — Full Tutorial</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">2.9M views</span></div></div></div>
-    <div class="course-card" data-cat="git" onclick="openCourse('RGOj5yH7evk')"><div class="course-thumb"><img src="https://img.youtube.com/vi/RGOj5yH7evk/mqdefault.jpg" loading="lazy" alt="Git"/><div class="course-category-tag">Git</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">1:08:29</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Git and GitHub for Beginners — Crash Course</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">8.9M views</span></div></div></div>
-    <div class="course-card" data-cat="git" onclick="openCourse('USjZcfj8yxE')"><div class="course-thumb"><img src="https://img.youtube.com/vi/USjZcfj8yxE/mqdefault.jpg" loading="lazy" alt="Git"/><div class="course-category-tag">Git</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">15:59</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">CS</div><span class="channel-name">Colt Steele</span></div><div class="course-title">Learn Git In 15 Minutes</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">1.8M views</span></div></div></div>
-    <div class="course-card" data-cat="react" onclick="openCourse('bMknfKXIFA8')"><div class="course-thumb"><img src="https://img.youtube.com/vi/bMknfKXIFA8/mqdefault.jpg" loading="lazy" alt="React"/><div class="course-category-tag">React</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">11:55:27</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">React Course — Full Tutorial for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">6.7M views</span></div></div></div>
-    <div class="course-card" data-cat="react" onclick="openCourse('SqcY0GlETPk')"><div class="course-thumb"><img src="https://img.youtube.com/vi/SqcY0GlETPk/mqdefault.jpg" loading="lazy" alt="React"/><div class="course-category-tag">React</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">1:22:46</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">PM</div><span class="channel-name">Programming with Mosh</span></div><div class="course-title">React Tutorial for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">4.1M views</span></div></div></div>
-    <div class="course-card" data-cat="database" onclick="openCourse('HXV3zeQKqGY')"><div class="course-thumb"><img src="https://img.youtube.com/vi/HXV3zeQKqGY/mqdefault.jpg" loading="lazy" alt="SQL"/><div class="course-category-tag">Database</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">4:20:02</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">SQL Tutorial — Full Database Course for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">7.1M views</span></div></div></div>
-    <div class="course-card" data-cat="database" onclick="openCourse('7S_tz1z_5bA')"><div class="course-thumb"><img src="https://img.youtube.com/vi/7S_tz1z_5bA/mqdefault.jpg" loading="lazy" alt="MySQL"/><div class="course-category-tag">Database</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">3:10:00</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">PM</div><span class="channel-name">Programming with Mosh</span></div><div class="course-title">MySQL Tutorial for Beginners — Full Course</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">5.2M views</span></div></div></div>
-    <div class="course-card" data-cat="linux" onclick="openCourse('sWbUDq4S6Y8')"><div class="course-thumb"><img src="https://img.youtube.com/vi/sWbUDq4S6Y8/mqdefault.jpg" loading="lazy" alt="Linux"/><div class="course-category-tag">Linux</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">5:22:37</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Linux Command Line Full Course for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">4.5M views</span></div></div></div>
-    <div class="course-card" data-cat="ai" onclick="openCourse('aircAruvnKk')"><div class="course-thumb"><img src="https://img.youtube.com/vi/aircAruvnKk/mqdefault.jpg" loading="lazy" alt="Neural"/><div class="course-category-tag">AI / ML</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">19:13</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">3B</div><span class="channel-name">3Blue1Brown</span></div><div class="course-title">Neural Networks — Visual Explainer Series</div><div class="course-meta"><span class="course-level level-intermediate">Intermediate</span><span class="course-views">14M views</span></div></div></div>
-    <div class="course-card" data-cat="ai" onclick="openCourse('tPYj3fFJGjk')"><div class="course-thumb"><img src="https://img.youtube.com/vi/tPYj3fFJGjk/mqdefault.jpg" loading="lazy" alt="TF"/><div class="course-category-tag">AI / ML</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">6:54:00</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">TensorFlow 2.0 Complete Course — Neural Networks</div><div class="course-meta"><span class="course-level level-advanced">Advanced</span><span class="course-views">2.1M views</span></div></div></div>
+    <div class="course-card" data-cat="webdev" data-title="html full course build website" onclick="openCourse('mU6anWqZJcc')"><div class="course-thumb"><img src="https://img.youtube.com/vi/mU6anWqZJcc/mqdefault.jpg" loading="lazy" alt="HTML" onerror="this.style.display='none'"/><div class="course-category-tag">Web Dev</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">2:02:37</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">HTML Full Course — Build a Website Tutorial</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">8.1M views</span></div></div></div>
+    <div class="course-card" data-cat="webdev" data-title="css tutorial zero to hero complete" onclick="openCourse('1Rs2ND1ryYc')"><div class="course-thumb"><img src="https://img.youtube.com/vi/1Rs2ND1ryYc/mqdefault.jpg" loading="lazy" alt="CSS" onerror="this.style.display='none'"/><div class="course-category-tag">Web Dev</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">6:18:37</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">CSS Tutorial — Zero to Hero (Complete Course)</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">3.2M views</span></div></div></div>
+    <div class="course-card" data-cat="webdev" data-title="learn javascript full course beginners" onclick="openCourse('PkZNo7MFNFg')"><div class="course-thumb"><img src="https://img.youtube.com/vi/PkZNo7MFNFg/mqdefault.jpg" loading="lazy" alt="JS" onerror="this.style.display='none'"/><div class="course-category-tag">Web Dev</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">3:26:42</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Learn JavaScript — Full Course for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">10M views</span></div></div></div>
+    <div class="course-card" data-cat="python" data-title="learn python full course beginners" onclick="openCourse('rfscVS0vtbw')"><div class="course-thumb"><img src="https://img.youtube.com/vi/rfscVS0vtbw/mqdefault.jpg" loading="lazy" alt="Python" onerror="this.style.display='none'"/><div class="course-category-tag">Python</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">4:26:52</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Learn Python — Full Course for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">12M views</span></div></div></div>
+    <div class="course-card" data-cat="python" data-title="python everybody full university course" onclick="openCourse('LHBE3CIBFe8')"><div class="course-thumb"><img src="https://img.youtube.com/vi/LHBE3CIBFe8/mqdefault.jpg" loading="lazy" alt="Python" onerror="this.style.display='none'"/><div class="course-category-tag">Python</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">13:37:30</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Python for Everybody — Full University Course</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">6.4M views</span></div></div></div>
+    <div class="course-card" data-cat="python ai" data-title="machine learning python full course" onclick="openCourse('i_LwzRVP7bg')"><div class="course-thumb"><img src="https://img.youtube.com/vi/i_LwzRVP7bg/mqdefault.jpg" loading="lazy" alt="ML" onerror="this.style.display='none'"/><div class="course-category-tag">Python</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">10:52:27</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Machine Learning with Python — Full Course</div><div class="course-meta"><span class="course-level level-intermediate">Intermediate</span><span class="course-views">3.8M views</span></div></div></div>
+    <div class="course-card" data-cat="dsa" data-title="data structures algorithms python full" onclick="openCourse('pkYVOmU3MgA')"><div class="course-thumb"><img src="https://img.youtube.com/vi/pkYVOmU3MgA/mqdefault.jpg" loading="lazy" alt="DSA" onerror="this.style.display='none'"/><div class="course-category-tag">DSA</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">9:54:38</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Data Structures & Algorithms in Python</div><div class="course-meta"><span class="course-level level-intermediate">Intermediate</span><span class="course-views">3.4M views</span></div></div></div>
+    <div class="course-card" data-cat="dsa" data-title="algorithms data structures full tutorial" onclick="openCourse('8hly31xKli0')"><div class="course-thumb"><img src="https://img.youtube.com/vi/8hly31xKli0/mqdefault.jpg" loading="lazy" alt="DSA" onerror="this.style.display='none'"/><div class="course-category-tag">DSA</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">5:22:04</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Algorithms and Data Structures — Full Tutorial</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">2.9M views</span></div></div></div>
+    <div class="course-card" data-cat="git" data-title="git github beginners crash course" onclick="openCourse('RGOj5yH7evk')"><div class="course-thumb"><img src="https://img.youtube.com/vi/RGOj5yH7evk/mqdefault.jpg" loading="lazy" alt="Git" onerror="this.style.display='none'"/><div class="course-category-tag">Git</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">1:08:29</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Git and GitHub for Beginners — Crash Course</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">8.9M views</span></div></div></div>
+    <div class="course-card" data-cat="git" data-title="learn git 15 minutes" onclick="openCourse('USjZcfj8yxE')"><div class="course-thumb"><img src="https://img.youtube.com/vi/USjZcfj8yxE/mqdefault.jpg" loading="lazy" alt="Git" onerror="this.style.display='none'"/><div class="course-category-tag">Git</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">15:59</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">CS</div><span class="channel-name">Colt Steele</span></div><div class="course-title">Learn Git In 15 Minutes</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">1.8M views</span></div></div></div>
+    <div class="course-card" data-cat="react" data-title="react course full tutorial beginners" onclick="openCourse('bMknfKXIFA8')"><div class="course-thumb"><img src="https://img.youtube.com/vi/bMknfKXIFA8/mqdefault.jpg" loading="lazy" alt="React" onerror="this.style.display='none'"/><div class="course-category-tag">React</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">11:55:27</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">React Course — Full Tutorial for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">6.7M views</span></div></div></div>
+    <div class="course-card" data-cat="react" data-title="react tutorial beginners mosh" onclick="openCourse('SqcY0GlETPk')"><div class="course-thumb"><img src="https://img.youtube.com/vi/SqcY0GlETPk/mqdefault.jpg" loading="lazy" alt="React" onerror="this.style.display='none'"/><div class="course-category-tag">React</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">1:22:46</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">PM</div><span class="channel-name">Programming with Mosh</span></div><div class="course-title">React Tutorial for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">4.1M views</span></div></div></div>
+    <div class="course-card" data-cat="database" data-title="sql tutorial full database course beginners" onclick="openCourse('HXV3zeQKqGY')"><div class="course-thumb"><img src="https://img.youtube.com/vi/HXV3zeQKqGY/mqdefault.jpg" loading="lazy" alt="SQL" onerror="this.style.display='none'"/><div class="course-category-tag">Database</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">4:20:02</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">SQL Tutorial — Full Database Course for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">7.1M views</span></div></div></div>
+    <div class="course-card" data-cat="database" data-title="mysql tutorial beginners full course" onclick="openCourse('7S_tz1z_5bA')"><div class="course-thumb"><img src="https://img.youtube.com/vi/7S_tz1z_5bA/mqdefault.jpg" loading="lazy" alt="MySQL" onerror="this.style.display='none'"/><div class="course-category-tag">Database</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">3:10:00</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">PM</div><span class="channel-name">Programming with Mosh</span></div><div class="course-title">MySQL Tutorial for Beginners — Full Course</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">5.2M views</span></div></div></div>
+    <div class="course-card" data-cat="linux" data-title="linux command line full course beginners" onclick="openCourse('sWbUDq4S6Y8')"><div class="course-thumb"><img src="https://img.youtube.com/vi/sWbUDq4S6Y8/mqdefault.jpg" loading="lazy" alt="Linux" onerror="this.style.display='none'"/><div class="course-category-tag">Linux</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">5:22:37</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">Linux Command Line Full Course for Beginners</div><div class="course-meta"><span class="course-level level-beginner">Beginner</span><span class="course-views">4.5M views</span></div></div></div>
+    <div class="course-card" data-cat="ai" data-title="neural networks visual explainer 3blue1brown" onclick="openCourse('aircAruvnKk')"><div class="course-thumb"><img src="https://img.youtube.com/vi/aircAruvnKk/mqdefault.jpg" loading="lazy" alt="Neural" onerror="this.style.display='none'"/><div class="course-category-tag">AI / ML</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">19:13</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">3B</div><span class="channel-name">3Blue1Brown</span></div><div class="course-title">Neural Networks — Visual Explainer Series</div><div class="course-meta"><span class="course-level level-intermediate">Intermediate</span><span class="course-views">14M views</span></div></div></div>
+    <div class="course-card" data-cat="ai" data-title="tensorflow complete course neural networks" onclick="openCourse('tPYj3fFJGjk')"><div class="course-thumb"><img src="https://img.youtube.com/vi/tPYj3fFJGjk/mqdefault.jpg" loading="lazy" alt="TF" onerror="this.style.display='none'"/><div class="course-category-tag">AI / ML</div><div class="play-overlay"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div><div class="course-duration">6:54:00</div></div><div class="course-info"><div class="course-channel"><div class="channel-avatar">FC</div><span class="channel-name">freeCodeCamp</span></div><div class="course-title">TensorFlow 2.0 Complete Course — Neural Networks</div><div class="course-meta"><span class="course-level level-advanced">Advanced</span><span class="course-views">2.1M views</span></div></div></div>
   </div>
+  <div class="no-results" id="noResults">😕 No courses found. Try a different search term!</div>
 </section>
 
 <div class="marquee-wrap"><div class="marquee-inner" id="mq3"></div></div>
@@ -846,11 +820,11 @@
     <h2 class="section-title reveal">Frequently Asked Questions.</h2>
     <p class="section-sub reveal">Everything you need to know about OGskills.</p>
     <div class="faq-list">
-      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Do I need an account to use OGskills? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">No! You can browse everything freely — the tracker, courses, and all content. You only need to sign in when you want to save your tracked skills to your account.</div></div></div>
-      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Is OGskills really free? Forever? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">Yes, 100% free. Always. No paid plans, no hidden fees, no ads.</div></div></div>
-      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">When does the sign-in popup appear? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">Only when you tap a skill to mark it (after 3 free taps), or when you click "Save Skills". Everything else — browsing, watching courses, reading — is completely free with no login needed.</div></div></div>
-      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">How does cloud saving work? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">OGskills uses Firebase (Google's free cloud). When you sign in and tap "Save Skills", all your tracked skills save securely to your account and reload automatically next time you visit.</div></div></div>
-      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Can I add custom skills? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">Yes! Type any skill in the "Add a skill" box, choose your level, and hit Add. It saves with all your other skills when you sign in.</div></div></div>
+      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Do I need an account to use OGskills? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">No! You can browse everything freely. You only need to sign in when you want to save your tracked skills to your account permanently.</div></div></div>
+      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Is OGskills really free? Forever? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">Yes, 100% free. Always. No paid plans, no hidden fees, no ads. Built by a student for students.</div></div></div>
+      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">When does the sign-in popup appear? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">Only when you tap the 4th skill onwards, add a custom skill, or click "Save Skills". Browsing, reading, and watching courses never requires login.</div></div></div>
+      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">How does cloud saving work? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">OGskills uses Firebase (Google's free cloud). When you sign in and tap "Save Skills", all your tracked skills save securely and reload automatically next visit.</div></div></div>
+      <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Will my skills be saved if I don't sign in? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">Yes! Even without signing in, your skills are saved in your browser's local storage. They'll be there if you refresh the page. Sign in to save them permanently across all devices.</div></div></div>
       <div class="faq-item reveal"><button class="faq-q" onclick="toggleFaq(this)">Who built OGskills? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">OGskills was built by Ayush Kamble, a first-year Computer Engineering student at Government Polytechnic Pune — his very first web project!</div></div></div>
     </div>
   </div>
@@ -905,7 +879,7 @@
 <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
 <div class="toast" id="toast"></div>
 
-<!-- ═══════════ FIREBASE ═══════════ -->
+<!-- ═══════ FIREBASE ═══════ -->
 <script type="module">
   // ════════════════════════════════════════
   // 🔥 PASTE YOUR FIREBASE CONFIG HERE
@@ -919,13 +893,13 @@
   import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
-  apiKey: "AIzaSyBU9YV4Dsm4hhJz1VtJGfWdjf-YtBapNmc",
-  authDomain: "ogskills-4cdbe.firebaseapp.com",
-  projectId: "ogskills-4cdbe",
-  storageBucket: "ogskills-4cdbe.firebasestorage.app",
-  messagingSenderId: "935893553359",
-  appId: "1:935893553359:web:d0c90ba9aa1a97ed84e7ba"
-};
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -942,6 +916,10 @@
   window._getDoc=getDoc; window._serverTimestamp=serverTimestamp;
 
   onAuthStateChanged(auth, async (user) => {
+    // ✅ CHANGE 13: Hide loading spinner once auth state resolves
+    const loader = document.getElementById('loadingScreen');
+    if (loader) { loader.classList.add('hidden'); setTimeout(()=>loader.remove(), 500); }
+
     window._currentUser = user;
     if (user) {
       closeAuthModal();
@@ -954,6 +932,15 @@
       updateNavLoggedOut();
       hideProfileStrip();
       showGuestNudge();
+      // ✅ CHANGE 5: Load guest skills from localStorage
+      const saved = localStorage.getItem('ogskills-guest');
+      if (saved) {
+        try {
+          window._loggedSkills = JSON.parse(saved);
+          restoreSkillsUI();
+          renderLog(); updateProgress();
+        } catch(e) {}
+      }
     }
   });
 
@@ -964,219 +951,219 @@
         const data = snap.data();
         const skills = data.skills || {};
         window._loggedSkills = {...skills};
-        Object.keys(skills).forEach(name => {
-          document.querySelectorAll('.skill-item').forEach(el => {
-            if (el.querySelector('.skill-name')?.textContent === name) {
-              el.classList.add('selected');
-              const dot = el.querySelector('.skill-dot');
-              if (dot) dot.style.cssText='background:var(--accent);border-color:var(--accent);transform:scale(1.2)';
-            }
-          });
-        });
+        restoreSkillsUI();
         renderLog(); updateProgress();
         if (data.joinedAt) {
           const d = data.joinedAt.toDate();
           document.getElementById('profileJoined').textContent = d.toLocaleDateString('en-IN',{month:'short',year:'numeric'});
         }
+        // Streak
+        const streak = data.streak || 0;
+        document.getElementById('profileStreak').textContent = streak + '🔥';
       }
     } catch(e) { console.log('Load skills:', e.message); }
   }
   window._loadUserSkills = loadUserSkills;
 </script>
 
-<!-- ═══════════ APP LOGIC ═══════════ -->
+<
 <script>
   window._loggedSkills = {};
   window._currentUser = null;
-  let guestTaps = 0; // allow 3 free taps before prompting
+  let guestTaps = 0;
 
-  // ── HELPERS ──
+  
   function showToast(msg, dur=3000) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'), dur);
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),dur);
   }
   function goTo(id) { document.getElementById(id)?.scrollIntoView({behavior:'smooth'}); }
 
-  // ── AUTH MODAL ──
+  function restoreSkillsUI() {
+    Object.keys(window._loggedSkills).forEach(name=>{
+      document.querySelectorAll('.skill-item').forEach(el=>{
+        if(el.querySelector('.skill-name')?.textContent===name){
+          el.classList.add('selected');
+          const dot=el.querySelector('.skill-dot');
+          if(dot) dot.style.cssText='background:var(--accent);border-color:var(--accent);transform:scale(1.2)';
+        }
+      });
+    });
+  }
+
+  
   window.openAuthModal = function(reason='Sign in to continue.') {
-    document.getElementById('authModalReason').textContent = reason;
+    document.getElementById('authModalReason').textContent=reason;
     document.getElementById('authOverlay').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    // reset forms
+    document.body.style.overflow='hidden';
     document.getElementById('loginError').style.display='none';
     document.getElementById('signupError').style.display='none';
     showLogin();
   };
   window.closeAuthModal = function() {
     document.getElementById('authOverlay').classList.remove('open');
-    document.body.style.overflow = '';
+    document.body.style.overflow='';
   };
-  window.overlayClick = function(e) {
-    if (e.target === document.getElementById('authOverlay')) closeAuthModal();
-  };
-  document.addEventListener('keydown', e => { if(e.key==='Escape') closeAuthModal(); });
+  window.overlayClick = e=>{ if(e.target===document.getElementById('authOverlay')) closeAuthModal(); };
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeAuthModal(); });
+  window.showSignup = ()=>{ document.getElementById('authLoginForm').style.display='none'; document.getElementById('authSignupForm').style.display='block'; };
+  window.showLogin = ()=>{ document.getElementById('authSignupForm').style.display='none'; document.getElementById('authLoginForm').style.display='block'; };
 
-  window.showSignup = function() {
-    document.getElementById('authLoginForm').style.display='none';
-    document.getElementById('authSignupForm').style.display='block';
-  };
-  window.showLogin = function() {
-    document.getElementById('authSignupForm').style.display='none';
-    document.getElementById('authLoginForm').style.display='block';
-  };
-
-  // ── AUTH HANDLERS ──
+  
   window.signInWithGoogle = async function() {
     try {
-      const result = await window._signInPopup(window._auth, window._provider);
-      await saveUserFirestore(result.user, result.user.displayName||'User', '');
+      const result = await window._signInPopup(window._auth,window._provider);
+      await saveUserFirestore(result.user,result.user.displayName||'User','');
     } catch(e) {
-      showToast('❌ ' + (e.message.includes('popup') ? 'Popup blocked. Try again.' : 'Sign in failed.'));
+      showToast('❌ '+(e.message.includes('popup')?'Popup blocked. Try again.':'Sign in failed: '+e.code));
     }
   };
 
   window.signInWithEmail = async function() {
-    const email = document.getElementById('loginEmail').value.trim();
-    const pass = document.getElementById('loginPassword').value;
-    const err = document.getElementById('loginError');
+    const email=document.getElementById('loginEmail').value.trim();
+    const pass=document.getElementById('loginPassword').value;
+    const err=document.getElementById('loginError');
     err.style.display='none';
-    if (!email||!pass) { err.textContent='Fill in all fields.'; err.style.display='block'; return; }
-    try {
-      await window._signInEmail(window._auth, email, pass);
-    } catch(e) {
-      err.textContent = e.code==='auth/wrong-password'||e.code==='auth/invalid-credential' ? 'Wrong email or password.' :
-                        e.code==='auth/user-not-found' ? 'No account found. Sign up!' : e.message;
+    if(!email||!pass){err.textContent='Fill in all fields.';err.style.display='block';return;}
+    try { await window._signInEmail(window._auth,email,pass); }
+    catch(e) {
+      err.textContent=e.code==='auth/wrong-password'||e.code==='auth/invalid-credential'?'Wrong email or password.':
+                      e.code==='auth/user-not-found'?'No account found. Sign up!':e.message;
       err.style.display='block';
     }
   };
 
   window.signUpWithEmail = async function() {
-    const name = document.getElementById('signupName').value.trim();
-    const username = document.getElementById('signupUsername').value.trim().replace('@','');
-    const email = document.getElementById('signupEmail').value.trim();
-    const pass = document.getElementById('signupPassword').value;
-    const err = document.getElementById('signupError');
+    const name=document.getElementById('signupName').value.trim();
+    const username=document.getElementById('signupUsername').value.trim().replace('@','');
+    const email=document.getElementById('signupEmail').value.trim();
+    const pass=document.getElementById('signupPassword').value;
+    const err=document.getElementById('signupError');
     err.style.display='none';
-    if (!name||!username||!email||!pass) { err.textContent='Fill in all fields.'; err.style.display='block'; return; }
-    if (pass.length<6) { err.textContent='Password must be 6+ characters.'; err.style.display='block'; return; }
+    if(!name||!username||!email||!pass){err.textContent='Fill in all fields.';err.style.display='block';return;}
+    if(pass.length<6){err.textContent='Password must be 6+ characters.';err.style.display='block';return;}
     try {
-      const result = await window._createUser(window._auth, email, pass);
-      await window._updateProfile(result.user, {displayName: name});
-      await saveUserFirestore(result.user, name, username);
-      showToast('🎉 Account created! Welcome, ' + name + '!');
+      const result=await window._createUser(window._auth,email,pass);
+      await window._updateProfile(result.user,{displayName:name});
+      await saveUserFirestore(result.user,name,username);
+      showToast('🎉 Account created! Welcome, '+name+'!');
     } catch(e) {
-      err.textContent = e.code==='auth/email-already-in-use' ? 'Email already registered. Sign in instead.' : e.message;
+      err.textContent=e.code==='auth/email-already-in-use'?'Email already registered. Sign in instead.':e.message;
       err.style.display='block';
     }
   };
 
-  async function saveUserFirestore(user, name, username) {
+  async function saveUserFirestore(user,name,username) {
     try {
-      const ref = window._doc(window._db,'users',user.uid);
-      const snap = await window._getDoc(ref);
-      if (!snap.exists()) {
-        await window._setDoc(ref, {
-          uid:user.uid, name, username, email:user.email,
-          photoURL:user.photoURL||'', skills:{},
-          joinedAt:window._serverTimestamp(), streak:0
-        });
+      const ref=window._doc(window._db,'users',user.uid);
+      const snap=await window._getDoc(ref);
+      if(!snap.exists()) {
+        await window._setDoc(ref,{uid:user.uid,name,username,email:user.email,photoURL:user.photoURL||'',skills:{},joinedAt:window._serverTimestamp(),streak:0});
       }
-    } catch(e) { console.log('Firestore:', e.message); }
+    } catch(e){console.log('Firestore:',e.message);}
   }
 
   window.logOut = async function() {
     await window._signOut(window._auth);
-    window._loggedSkills = {};
-    guestTaps = 0;
-    // Deselect all skills visually
-    document.querySelectorAll('.skill-item.selected').forEach(el => el.classList.remove('selected'));
+    window._loggedSkills={}; guestTaps=0;
+    document.querySelectorAll('.skill-item.selected').forEach(el=>el.classList.remove('selected'));
+    localStorage.removeItem('ogskills-guest');
     renderLog(); updateProgress();
     showToast('👋 Signed out. See you soon!');
   };
 
   window.saveSkillsToFirebase = async function() {
-    if (!window._currentUser) { openAuthModal('Sign in to save your skills.'); return; }
-    const btn = document.getElementById('saveSkillsBtn');
+    if(!window._currentUser){openAuthModal('Sign in to save your skills.');return;}
+    const btn=document.getElementById('saveSkillsBtn');
     btn.classList.add('saving'); btn.textContent='⏳ Saving...';
     try {
       await window._setDoc(window._doc(window._db,'users',window._currentUser.uid),
-        {skills:window._loggedSkills, lastUpdated:window._serverTimestamp()}, {merge:true});
+        {skills:window._loggedSkills,lastUpdated:window._serverTimestamp()},{merge:true});
+      btn.classList.remove('saving'); btn.classList.add('saved');
+      btn.textContent='✅ Skills Saved!';
       showToast('✅ Skills saved to your account!');
-      document.getElementById('profileSkillCount').textContent = Object.keys(window._loggedSkills).length;
-    } catch(e) { showToast('❌ Save failed: ' + e.message); }
-    btn.classList.remove('saving'); btn.textContent='☁️ Save Skills to My Account';
+      document.getElementById('profileSkillCount').textContent=Object.keys(window._loggedSkills).length;
+      setTimeout(()=>{btn.classList.remove('saved');btn.textContent='☁️ Save Skills to My Account';},3000);
+    } catch(e) {
+      showToast('❌ Save failed: '+e.message);
+      btn.classList.remove('saving'); btn.textContent='☁️ Save Skills to My Account';
+    }
   };
 
-  // ── NAV & UI STATE ──
+
+  window.shareProgress = function() {
+    const skills=Object.keys(window._loggedSkills);
+    if(!skills.length){showToast('⚠️ Track some skills first!');return;}
+    const name=window._currentUser?.displayName?.split(' ')[0]||'I';
+    const text=`🎯 ${name} tracked ${skills.length} skill${skills.length>1?'s':''} on OGskills!\n${skills.slice(0,5).map(s=>'✅ '+s).join('\n')}${skills.length>5?'\n...and more!':''}\n\nTrack yours free → https://kamayu2.github.io/ogskills/`;
+    if(navigator.share){
+      navigator.share({title:'My OGskills Progress',text,url:'https://kamayu2.github.io/ogskills/'}).catch(()=>{});
+    } else {
+      navigator.clipboard?.writeText(text).then(()=>showToast('📋 Progress copied! Share it anywhere.')).catch(()=>showToast('📋 '+text));
+    }
+  };
+
+
   function updateNavLoggedIn(user) {
     document.getElementById('navSignInBtn').style.display='none';
-    const nu = document.getElementById('navUser'); nu.classList.add('visible');
-    document.getElementById('navUsername').textContent = (user.displayName||'User').split(' ')[0];
-    const ph = document.getElementById('navAvatarPh');
-    if (user.photoURL) {
-      ph.outerHTML=`<img class="nav-avatar" id="navAvatarPh" src="${user.photoURL}" alt="avatar"/>`;
-    } else {
-      ph.textContent = (user.displayName||'U')[0].toUpperCase();
-    }
-    // mobile
-    const mob = document.getElementById('mobileAuthBtn');
-    if (mob) { mob.textContent='🚪 Sign Out'; mob.onclick=()=>{closeMenu();logOut();}; }
+    document.getElementById('navUser').classList.add('visible');
+    document.getElementById('navUsername').textContent=(user.displayName||'User').split(' ')[0];
+    const ph=document.getElementById('navAvatarPh');
+    if(user.photoURL) ph.outerHTML=`<img class="nav-avatar" id="navAvatarPh" src="${user.photoURL}" alt="avatar"/>`;
+    else ph.textContent=(user.displayName||'U')[0].toUpperCase();
+    const mob=document.getElementById('mobileAuthBtn');
+    if(mob){mob.textContent='🚪 Sign Out';mob.onclick=()=>{closeMenu();logOut();};}
   }
   function updateNavLoggedOut() {
     document.getElementById('navSignInBtn').style.display='';
     document.getElementById('navUser').classList.remove('visible');
-    const mob = document.getElementById('mobileAuthBtn');
-    if (mob) { mob.textContent='Sign In / Sign Up'; mob.onclick=()=>{closeMenu();openAuthModal('Sign in to track your skills.');}; }
+    const mob=document.getElementById('mobileAuthBtn');
+    if(mob){mob.textContent='Sign In / Sign Up';mob.onclick=()=>{closeMenu();openAuthModal('Sign in to track your skills.');};}
   }
   function updateProfileStrip(user) {
     document.getElementById('profileStrip').classList.add('visible');
-    document.getElementById('profileName').textContent = user.displayName || 'User';
-    document.getElementById('profileEmail').textContent = user.email;
-    const av = document.getElementById('profileAvatarPh');
-    if (user.photoURL) {
-      av.outerHTML=`<img class="profile-avatar-lg" id="profileAvatarPh" src="${user.photoURL}" alt="avatar"/>`;
-    } else {
-      av.textContent = (user.displayName||'U')[0].toUpperCase();
-    }
+    document.getElementById('profileName').textContent=user.displayName||'User';
+    document.getElementById('profileEmail').textContent=user.email;
+    const av=document.getElementById('profileAvatarPh');
+    if(user.photoURL) av.outerHTML=`<img class="profile-avatar-lg" id="profileAvatarPh" src="${user.photoURL}" alt="avatar"/>`;
+    else av.textContent=(user.displayName||'U')[0].toUpperCase();
   }
-  function hideProfileStrip() { document.getElementById('profileStrip').classList.remove('visible'); }
-  function showSaveBtn() {
+  function hideProfileStrip(){document.getElementById('profileStrip').classList.remove('visible');}
+  function showSaveBtn(){
     document.getElementById('guestNudge').style.display='none';
     document.getElementById('saveSkillsBtn').style.display='flex';
+    document.getElementById('shareBtn').style.display='flex';
   }
-  function showGuestNudge() {
+  function showGuestNudge(){
     document.getElementById('guestNudge').style.display='flex';
     document.getElementById('saveSkillsBtn').style.display='none';
+    document.getElementById('shareBtn').style.display='none';
   }
 
-  // ── THEME ──
-  let isDark = false;
-  function applyTheme(dark) {
-    isDark = dark;
-    document.documentElement.setAttribute('data-theme', dark?'dark':'light');
-    ['toggleThumb','toggleThumbMobile'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=dark?'🌙':'☀️'; });
-    const tl=document.getElementById('themeLabel'); if(tl) tl.textContent=dark?'🌙 Dark Mode':'☀️ Light Mode';
-    ['themeToggle','themeToggleMobile'].forEach(id=>{ const el=document.getElementById(id); if(el) el.checked=dark; });
-    localStorage.setItem('ogskills-theme', dark?'dark':'light');
-  }
-  window.toggleTheme = cb => applyTheme(cb.checked);
-  window.toggleThemeMobile = cb => applyTheme(cb.checked);
-  const saved = localStorage.getItem('ogskills-theme');
-  if (saved==='dark') applyTheme(true);
 
-  // ── MARQUEES ──
-  const mq1 = ['HTML & CSS 🌐','JavaScript ⚡','Python 🐍','React ⚛️','Git & GitHub 🔀','SQL 🗄️','DSA 🧠','Machine Learning 🤖','Linux 🐧','TypeScript 📘','Node.js 🟢','Docker 🐳','Cloud ☁️','REST APIs 🔗','Figma 🎭'];
-  const mq2 = ['Full Stack Dev 🖥️','Data Scientist 📊','DevOps Engineer ⚙️','UI/UX Designer 🎨','ML Engineer 🤖','Backend Dev 🔧','Mobile Dev 📱','Cloud Architect ☁️','Cybersecurity 🔐','Game Dev 🎮'];
-  const mq3 = ['VS Code 💻','GitHub 🐙','Figma 🎭','Postman 📬','Docker 🐳','MongoDB 🍃','Firebase 🔥','AWS ☁️','Linux 🐧','React ⚛️','Node.js 🟢','TailwindCSS 🌊','PostgreSQL 🐘'];
-  function buildMarquee(id, items) {
-    const el=document.getElementById(id); if(!el) return;
-    el.innerHTML=[...items,...items].map(t=>`<span class="marquee-item">${t}<span class="dot">✦</span></span>`).join('');
+  let isDark=false;
+  function applyTheme(dark){
+    isDark=dark;
+    document.documentElement.setAttribute('data-theme',dark?'dark':'light');
+    ['toggleThumb','toggleThumbMobile'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=dark?'🌙':'☀️';});
+    const tl=document.getElementById('themeLabel');if(tl)tl.textContent=dark?'🌙 Dark Mode':'☀️ Light Mode';
+    ['themeToggle','themeToggleMobile'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=dark;});
+    localStorage.setItem('ogskills-theme',dark?'dark':'light');
   }
-  buildMarquee('mq1',mq1); buildMarquee('mq2',mq2); buildMarquee('mq3',mq3);
+  window.toggleTheme=cb=>applyTheme(cb.checked);
+  window.toggleThemeMobile=cb=>applyTheme(cb.checked);
+  const savedTheme=localStorage.getItem('ogskills-theme');
+  if(savedTheme==='dark') applyTheme(true);
 
-  // ── TAG CLOUD ──
+
+  const mq1=['HTML & CSS 🌐','JavaScript ⚡','Python 🐍','React ⚛️','Git & GitHub 🔀','SQL 🗄️','DSA 🧠','Machine Learning 🤖','Linux 🐧','TypeScript 📘','Node.js 🟢','Docker 🐳','Cloud ☁️','REST APIs 🔗','Figma 🎭'];
+  const mq2=['Full Stack Dev 🖥️','Data Scientist 📊','DevOps Engineer ⚙️','UI/UX Designer 🎨','ML Engineer 🤖','Backend Dev 🔧','Mobile Dev 📱','Cloud Architect ☁️','Cybersecurity 🔐','Game Dev 🎮'];
+  const mq3=['VS Code 💻','GitHub 🐙','Figma 🎭','Postman 📬','Docker 🐳','MongoDB 🍃','Firebase 🔥','AWS ☁️','Linux 🐧','React ⚛️','Node.js 🟢','TailwindCSS 🌊','PostgreSQL 🐘'];
+  function buildMarquee(id,items){const el=document.getElementById(id);if(!el)return;el.innerHTML=[...items,...items].map(t=>`<span class="marquee-item">${t}<span class="dot">✦</span></span>`).join('');}
+  buildMarquee('mq1',mq1);buildMarquee('mq2',mq2);buildMarquee('mq3',mq3);
+
+
   const tags=[
     {l:'HTML & CSS',c:'tag-green'},{l:'JavaScript',c:'tag-gold'},{l:'Python',c:'tag-blue'},
     {l:'React',c:'tag-purple'},{l:'Git',c:'tag-red'},{l:'SQL',c:'tag-blue'},
@@ -1184,56 +1171,52 @@
     {l:'TypeScript',c:'tag-blue'},{l:'Node.js',c:'tag-green'},{l:'Docker',c:'tag-blue'},
     {l:'Cloud',c:'tag-purple'},{l:'REST APIs',c:'tag-red'},{l:'Figma',c:'tag-purple'},
     {l:'MongoDB',c:'tag-green'},{l:'Firebase',c:'tag-gold'},{l:'TailwindCSS',c:'tag-blue'},
-    {l:'C++',c:'tag-red'},{l:'Java',c:'tag-gold'},{l:'Flutter',c:'tag-blue'},{l:'Kubernetes',c:'tag-purple'},
+    {l:'C++',c:'tag-red'},{l:'Java',c:'tag-gold'},{l:'Flutter',c:'tag-blue'},{l:'C Programming',c:'tag-red'},
   ];
   const tc=document.getElementById('tagCloud');
-  if(tc) tags.forEach((t,i)=>{ const s=document.createElement('span'); s.className=`tag ${t.c}`; s.textContent=t.l; s.style.animationDelay=`${i*0.04}s`; tc.appendChild(s); });
+  if(tc)tags.forEach((t,i)=>{const s=document.createElement('span');s.className=`tag ${t.c}`;s.textContent=t.l;s.style.animationDelay=`${i*0.04}s`;tc.appendChild(s);});
 
-  // ── NAV ──
-  window.toggleMenu=()=>{ document.getElementById('mobileMenu').classList.toggle('open'); document.getElementById('hamburger').classList.toggle('open'); };
-  window.closeMenu=()=>{ document.getElementById('mobileMenu').classList.remove('open'); document.getElementById('hamburger').classList.remove('open'); };
-  window.addEventListener('scroll',()=>{ document.getElementById('backToTop')?.classList.toggle('visible',window.scrollY>500); });
+  window.toggleMenu=()=>{document.getElementById('mobileMenu').classList.toggle('open');document.getElementById('hamburger').classList.toggle('open');};
+  window.closeMenu=()=>{document.getElementById('mobileMenu').classList.remove('open');document.getElementById('hamburger').classList.remove('open');};
+  window.addEventListener('scroll',()=>{document.getElementById('backToTop')?.classList.toggle('visible',window.scrollY>500);});
 
-  // ── SCROLL REVEAL ──
-  const obs=new IntersectionObserver(entries=>{ entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);} }); },{threshold:0.1});
+
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.1});
   document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>obs.observe(el));
 
-  // ── TRACKER ──
-  // Guest users can tap 3 skills for free, then sign-in popup appears
-  window.handleSkillClick = function(el, name) {
-    if (window._currentUser) {
-      // Logged in — full access
-      toggleSkill(el, name);
+ 
+  window.handleSkillClick=function(el,name){
+    if(window._currentUser){
+      toggleSkill(el,name);
     } else {
-      // Guest — allow 3 free taps, then prompt
-      if (!el.classList.contains('selected')) {
+      if(!el.classList.contains('selected')){
         guestTaps++;
-        if (guestTaps > 3) {
+        if(guestTaps>3){
           openAuthModal('🔒 Sign in free to keep tracking skills and save your progress!');
-          guestTaps = 3; // don't keep incrementing
-          return;
+          guestTaps=3; return;
         }
       }
-      toggleSkill(el, name);
-      // After 3rd tap, show a gentle nudge
-      if (guestTaps === 3 && !window._currentUser) {
-        setTimeout(()=>showToast('💡 Sign in free to save your skills!'), 600);
-      }
+      toggleSkill(el,name);
+   
+      localStorage.setItem('ogskills-guest',JSON.stringify(window._loggedSkills));
+      if(guestTaps===3&&!window._currentUser) setTimeout(()=>showToast('💡 Sign in free to save your skills!'),600);
     }
   };
 
-  function toggleSkill(el, name) {
-    if (el.classList.contains('selected')) {
+  function toggleSkill(el,name){
+    if(el.classList.contains('selected')){
       el.classList.remove('selected');
       delete window._loggedSkills[name];
     } else {
       el.classList.add('selected');
-      window._loggedSkills[name] = el.querySelector('.skill-level-badge')?.textContent.trim()||'Beginner';
+      window._loggedSkills[name]=el.querySelector('.skill-level-badge')?.textContent.trim()||'Beginner';
     }
+
+    if(!window._currentUser) localStorage.setItem('ogskills-guest',JSON.stringify(window._loggedSkills));
     renderLog(); updateProgress();
   }
 
-  function renderLog() {
+  function renderLog(){
     const c=document.getElementById('skillsLog');
     const names=Object.keys(window._loggedSkills);
     if(!names.length){c.innerHTML='<p style="color:var(--ink-muted);font-size:0.85rem;text-align:center;padding:28px 0;">No skills logged yet.<br>👆 Tap a skill to start!</p>';return;}
@@ -1243,8 +1226,9 @@
 
   window.removeSkill=function(name){
     delete window._loggedSkills[name];
-    if(!window._currentUser && guestTaps>0) guestTaps--;
+    if(!window._currentUser&&guestTaps>0)guestTaps--;
     document.querySelectorAll('.skill-item').forEach(el=>{if(el.querySelector('.skill-name')?.textContent===name)el.classList.remove('selected');});
+    if(!window._currentUser)localStorage.setItem('ogskills-guest',JSON.stringify(window._loggedSkills));
     renderLog();updateProgress();
   };
 
@@ -1268,12 +1252,9 @@
   }
 
   window.addCustomSkill=function(){
-    if(!window._currentUser){
-      openAuthModal('🔒 Sign in free to add custom skills and save your progress!');
-      return;
-    }
+    if(!window._currentUser){openAuthModal('🔒 Sign in free to add custom skills!');return;}
     const input=document.getElementById('customSkill');
-    const name=input.value.trim(); if(!name){input.focus();return;}
+    const name=input.value.trim();if(!name){input.focus();return;}
     const level=document.getElementById('customLevel').value;
     const cls={Beginner:'level-beginner',Intermediate:'level-intermediate',Advanced:'level-advanced'}[level];
     const div=document.createElement('div');
@@ -1287,13 +1268,36 @@
   };
   document.getElementById('customSkill')?.addEventListener('keydown',e=>{if(e.key==='Enter')window.addCustomSkill();});
 
-  // ── COURSES ──
+ 
   window.openCourse=id=>window.open(`https://www.youtube.com/watch?v=${id}`,'_blank');
+
+  let currentFilter='all';
   window.filterCourses=function(cat,btn){
+    currentFilter=cat;
     document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    document.querySelectorAll('.course-card').forEach(c=>c.classList.toggle('hidden',cat!=='all'&&!c.dataset.cat.includes(cat)));
+    document.getElementById('courseSearch').value='';
+    applyFilters();
   };
+
+  
+  window.searchCourses=function(query){
+    applyFilters(query);
+  };
+
+  function applyFilters(query=''){
+    const q=query.toLowerCase().trim();
+    let visible=0;
+    document.querySelectorAll('.course-card').forEach(c=>{
+      const catMatch=currentFilter==='all'||c.dataset.cat.includes(currentFilter);
+      const titleMatch=!q||c.dataset.title.includes(q)||c.querySelector('.course-title')?.textContent.toLowerCase().includes(q);
+      const show=catMatch&&titleMatch;
+      c.classList.toggle('hidden',!show);
+      if(show)visible++;
+    });
+    const noRes=document.getElementById('noResults');
+    if(noRes)noRes.classList.toggle('visible',visible===0);
+  }
 
   // ── FAQ ──
   window.toggleFaq=function(btn){
